@@ -1,22 +1,36 @@
 import { Hono } from 'hono';
-import { products } from './product.js';
+import { products, productSchema } from './product.js';
 import { StatusCodes } from 'http-status-codes';
+import { zValidator } from '@hono/zod-validator';
 
-export const editRoute = new Hono().put('/:productId', async c => {
-  const productId = c.req.param('productId');
-  const { name, url, currency } = await c.req.json();
-
-  const product = products.find(p => p.productId === productId);
-  if (!product) {
-    return c.json(
-      { message: `Product ${productId} not found` },
-      StatusCodes.NOT_FOUND
-    );
-  }
-
-  product.name = name;
-  product.url = url;
-  product.currency = currency;
-
-  return c.json(product, StatusCodes.OK);
+const paramSchema = productSchema.pick({ productId: true });
+const bodySchema = productSchema.pick({
+  name: true,
+  url: true,
+  currency: true,
 });
+
+export const editRoute = new Hono().put(
+  '/:productId',
+  zValidator('param', paramSchema),
+  zValidator('json', bodySchema),
+  async c => {
+    const { productId } = c.req.valid('param');
+    const { name, url, currency } = c.req.valid('json');
+
+    const product = products.find(p => p.productId === productId);
+    if (!product) {
+      return c.json(
+        { message: `Product ${productId} not found` },
+        StatusCodes.NOT_FOUND
+      );
+    }
+
+    product.name = name;
+    product.url = url;
+    product.currency = currency;
+    product.lastUpdated = new Date();
+
+    return c.json(product, StatusCodes.OK);
+  }
+);
