@@ -1,21 +1,27 @@
-export type Product = {
-  storeId: string;
-  productId: string;
-  name: string;
-  url: string;
-  currentPrice?: number;
-  priceChangePercentage?: number;
-  lastUpdated?: Date;
-  currency: 'PEN' | 'USD';
-};
+import { z } from 'zod';
+
+export const productSchema = z.object({
+  storeId: z.uuidv7(),
+  productId: z.uuidv7(),
+  name: z.string().min(1).max(1024),
+  url: z.url().min(1).max(2048),
+  currentPrice: z.number().positive().optional(),
+  priceChangePercentage: z.number().optional(),
+  lastUpdated: z.date().optional(),
+  currency: z.enum(['PEN', 'USD']),
+});
+
+export type Product = z.infer<typeof productSchema>;
 
 export const products: Product[] = [];
 
-export type PriceHistory = {
-  productId: string;
-  priceHistoryId: string;
-  timestamp: Date;
-  price: number;
-};
+export const priceHistorySchema = z.object({
+  productId: z.uuidv7(),
+  priceHistoryId: z.uuidv7(),
+  timestamp: z.date(),
+  price: z.number().positive(),
+});
+
+export type PriceHistory = z.infer<typeof priceHistorySchema>;
 
 export const priceHistories: PriceHistory[] = [];
