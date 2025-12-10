@@ -14,6 +14,7 @@
     "esModuleInterop": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
+    "removeComments": true,
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
     "outDir": "./dist",
