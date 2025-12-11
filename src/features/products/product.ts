@@ -7,7 +7,7 @@ export const productSchema = z.object({
   url: z.url().min(1).max(2048),
   currentPrice: z.number().positive().optional(),
   priceChangePercentage: z.number().optional(),
-  lastUpdated: z.date().optional(),
+  lastUpdated: z.coerce.date().optional(),
   currency: z.enum(['PEN', 'USD']),
 });
 
@@ -18,7 +18,7 @@ export const products: Product[] = [];
 export const priceHistorySchema = z.object({
   productId: z.uuidv7(),
   priceHistoryId: z.uuidv7(),
-  timestamp: z.date(),
+  timestamp: z.coerce.date(),
   price: z.number().positive(),
 });
 

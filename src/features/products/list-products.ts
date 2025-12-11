@@ -3,7 +3,7 @@ import { products } from './product.js';
 import { StatusCodes } from 'http-status-codes';
 import { paginationSchema, createPage } from '@/types/pagination.js';
 import { z } from 'zod';
-import { zValidator } from '@hono/zod-validator';
+import { zValidator } from '@/utils/validation.js';
 
 const schema = paginationSchema.extend({
   name: z.string().optional(),

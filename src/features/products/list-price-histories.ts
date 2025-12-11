@@ -2,7 +2,8 @@ import { Hono } from 'hono';
 import { products, priceHistories, productSchema } from './product.js';
 import { StatusCodes } from 'http-status-codes';
 import { paginationSchema, createPage } from '@/types/pagination.js';
-import { zValidator } from '@hono/zod-validator';
+import { zValidator } from '@/utils/validation.js';
+import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 
 const paramSchema = productSchema.pick({ productId: true });
 
@@ -17,7 +18,7 @@ export const listPriceHistoriesRoute = new Hono().get(
     const product = products.find(p => p.productId === productId);
     if (!product) {
       return c.json(
-        { message: `Product ${productId} not found` },
+        createResourceNotFoundPD(c.req.path, `Product ${productId} not found`),
         StatusCodes.NOT_FOUND
       );
     }

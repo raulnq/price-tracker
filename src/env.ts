@@ -7,6 +7,7 @@ const ENVSchema = z.object({
     .enum(['development', 'production', 'test'])
     .default('development'),
   PORT: z.coerce.number().default(3000),
+  TOKEN: z.string().optional(),
 });
 
 expand(config());
