@@ -2,8 +2,9 @@ import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { products, productSchema } from './product.js';
-import { zValidator } from '@hono/zod-validator';
+import { zValidator } from '@/utils/validation.js';
 import { stores } from '@/features/stores/store.js';
+import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 
 const schema = productSchema.omit({
   productId: true,
@@ -16,22 +17,19 @@ export const addRoute = new Hono().post(
   '/',
   zValidator('json', schema),
   async c => {
-    const { storeId, name, url, currency } = c.req.valid('json');
+    const data = c.req.valid('json');
 
-    const store = stores.find(s => s.storeId === storeId);
+    const store = stores.find(s => s.storeId === data.storeId);
     if (!store) {
       return c.json(
-        { message: `Store ${storeId} not found` },
+        createResourceNotFoundPD(c.req.path, `Store ${data.storeId} not found`),
         StatusCodes.NOT_FOUND
       );
     }
 
     const product = {
-      storeId,
+      ...data,
       productId: v7(),
-      name,
-      url,
-      currency,
     };
 
     products.push(product);

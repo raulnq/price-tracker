@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
 import { stores, storeSchema } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { zValidator } from '@hono/zod-validator';
+import { zValidator } from '@/utils/validation.js';
+import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 
 const schema = storeSchema.pick({ storeId: true });
 
@@ -13,7 +14,7 @@ export const getRoute = new Hono().get(
     const store = stores.find(s => s.storeId === storeId);
     if (!store) {
       return c.json(
-        { message: `Store ${storeId} not found` },
+        createResourceNotFoundPD(c.req.path, `Store ${storeId} not found`),
         StatusCodes.NOT_FOUND
       );
     }
