@@ -37,33 +37,39 @@ export const addPriceHistoryRoute = new Hono().post(
     }
 
     const timestamp = new Date();
-    const [priceHistory] = await client
-      .insert(priceHistories)
-      .values({
-        priceHistoryId: v7(),
-        productId,
-        timestamp,
-        price: price.toString(),
-      })
-      .returning();
 
-    let priceChangePercentage = 0;
-    if (product.currentPrice) {
+    const priceHistory = await client.transaction(async tx => {
+      const [priceHistory] = await tx
+        .insert(priceHistories)
+        .values({
+          priceHistoryId: v7(),
+          productId,
+          timestamp,
+          price: price,
+        })
+        .returning();
+
       const currentPrice = product.currentPrice;
-      if (currentPrice > 0) {
-        const priceChange = price - currentPrice;
-        priceChangePercentage = (priceChange / currentPrice) * 100;
+      let priceChangePercentage = 0;
+      if (
+        currentPrice !== null &&
+        currentPrice !== undefined &&
+        currentPrice > 0
+      ) {
+        priceChangePercentage = ((price - currentPrice) / currentPrice) * 100;
       }
-    }
 
-    await client
-      .update(products)
-      .set({
-        currentPrice: price,
-        priceChangePercentage: priceChangePercentage,
-        lastUpdated: timestamp,
-      })
-      .where(eq(products.productId, productId));
+      await tx
+        .update(products)
+        .set({
+          currentPrice: price,
+          priceChangePercentage,
+          lastUpdated: timestamp,
+        })
+        .where(eq(products.productId, productId));
+
+      return priceHistory;
+    });
 
     return c.json(priceHistory, StatusCodes.CREATED);
   }

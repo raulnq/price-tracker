@@ -2,6 +2,7 @@ import { ProblemDocument } from 'http-problem-details';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
 import { ENV } from '@/env.js';
+import type { HTTPResponseError } from 'hono/types';
 
 export const createResourceNotFoundPD = (path: string, detail: string) => {
   return new ProblemDocument({
@@ -13,7 +14,10 @@ export const createResourceNotFoundPD = (path: string, detail: string) => {
   });
 };
 
-export const createInternalServerErrorPD = (path: string, error?: Error) => {
+export const createInternalServerErrorPD = (
+  path: string,
+  error?: Error | HTTPResponseError
+) => {
   const extensions =
     ENV.NODE_ENV === 'development' && error?.stack
       ? { stack: error.stack }

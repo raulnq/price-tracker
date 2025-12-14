@@ -59,5 +59,9 @@ export const priceHistories = dbSchema.table('price_histories', {
     .notNull()
     .references(() => products.productId),
   timestamp: timestamp('timestamp', { mode: 'date' }).notNull(),
-  price: numeric('price', { precision: 10, scale: 2 }).notNull(),
+  price: numeric('price', {
+    precision: 10,
+    scale: 2,
+    mode: 'number',
+  }).notNull(),
 });

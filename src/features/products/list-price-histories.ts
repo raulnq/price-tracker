@@ -40,6 +40,7 @@ export const listPriceHistoriesRoute = new Hono().get(
       .select()
       .from(priceHistories)
       .where(eq(priceHistories.productId, productId))
+      .orderBy(priceHistories.timestamp)
       .limit(pageSize)
       .offset(offset);
 
