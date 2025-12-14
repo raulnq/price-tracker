@@ -9,6 +9,8 @@ import {
 } from './product.js';
 import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
+import { client } from '@/database/client.js';
+import { eq } from 'drizzle-orm';
 
 const paramSchema = productSchema.pick({ productId: true });
 const bodySchema = priceHistorySchema.pick({ price: true });
@@ -21,7 +23,12 @@ export const addPriceHistoryRoute = new Hono().post(
     const { productId } = c.req.valid('param');
     const { price } = c.req.valid('json');
 
-    const product = products.find(p => p.productId === productId);
+    const [product] = await client
+      .select()
+      .from(products)
+      .where(eq(products.productId, productId))
+      .limit(1);
+
     if (!product) {
       return c.json(
         createResourceNotFoundPD(c.req.path, `Product ${productId} not found`),
@@ -29,25 +36,34 @@ export const addPriceHistoryRoute = new Hono().post(
       );
     }
 
-    const priceHistory = {
-      productId,
-      priceHistoryId: v7(),
-      timestamp: new Date(),
-      price,
-    };
+    const timestamp = new Date();
+    const [priceHistory] = await client
+      .insert(priceHistories)
+      .values({
+        priceHistoryId: v7(),
+        productId,
+        timestamp,
+        price: price.toString(),
+      })
+      .returning();
 
-    priceHistories.push(priceHistory);
-
-    if (product.currentPrice && product.currentPrice > 0) {
-      const priceChange = price - product.currentPrice;
-      product.priceChangePercentage =
-        (priceChange / product.currentPrice) * 100;
-    } else {
-      product.priceChangePercentage = 0;
+    let priceChangePercentage = 0;
+    if (product.currentPrice) {
+      const currentPrice = parseFloat(product.currentPrice);
+      if (currentPrice > 0) {
+        const priceChange = price - currentPrice;
+        priceChangePercentage = (priceChange / currentPrice) * 100;
+      }
     }
 
-    product.currentPrice = price;
-    product.lastUpdated = priceHistory.timestamp;
+    await client
+      .update(products)
+      .set({
+        currentPrice: price.toString(),
+        priceChangePercentage: priceChangePercentage.toString(),
+        lastUpdated: timestamp,
+      })
+      .where(eq(products.productId, productId));
 
     return c.json(priceHistory, StatusCodes.CREATED);
   }

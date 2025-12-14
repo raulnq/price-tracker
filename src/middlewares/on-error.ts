@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 
 export const onError: ErrorHandler = (_err, c) => {
   return c.json(
-    createInternalServerErrorPD(c.req.path),
+    createInternalServerErrorPD(c.req.path, _err),
     StatusCodes.INTERNAL_SERVER_ERROR
   );
 };
