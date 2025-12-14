@@ -12,11 +12,11 @@ export const productSchema = z.object({
   storeId: z.uuidv7(),
   productId: z.uuidv7(),
   name: z.string().min(1).max(1024),
-  url: z.url().min(1).max(2048),
-  currentPrice: z.number().positive().optional(),
-  priceChangePercentage: z.number().optional(),
-  lastUpdated: z.coerce.date().optional(),
-  currency: z.enum(['PEN', 'USD']),
+  url: z.url().max(2048),
+  currentPrice: z.number().positive().nullable(),
+  priceChangePercentage: z.number().nullable(),
+  lastUpdated: z.coerce.date().nullable(),
+  currency: z.string().length(3),
 });
 
 export type Product = z.infer<typeof productSchema>;
@@ -30,10 +30,15 @@ export const products = dbSchema.table('products', {
     .references(() => stores.storeId),
   name: varchar('name', { length: 1024 }).notNull(),
   url: varchar('url', { length: 2048 }).notNull(),
-  currentPrice: numeric('currentprice', { precision: 10, scale: 2 }),
+  currentPrice: numeric('currentprice', {
+    precision: 10,
+    scale: 2,
+    mode: 'number',
+  }),
   priceChangePercentage: numeric('pricechangepercentage', {
     precision: 5,
     scale: 2,
+    mode: 'number',
   }),
   lastUpdated: timestamp('lastupdated', { mode: 'date' }),
   currency: varchar('currency', { length: 3 }).notNull(),

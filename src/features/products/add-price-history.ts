@@ -49,7 +49,7 @@ export const addPriceHistoryRoute = new Hono().post(
 
     let priceChangePercentage = 0;
     if (product.currentPrice) {
-      const currentPrice = parseFloat(product.currentPrice);
+      const currentPrice = product.currentPrice;
       if (currentPrice > 0) {
         const priceChange = price - currentPrice;
         priceChangePercentage = (priceChange / currentPrice) * 100;
@@ -59,8 +59,8 @@ export const addPriceHistoryRoute = new Hono().post(
     await client
       .update(products)
       .set({
-        currentPrice: price.toString(),
-        priceChangePercentage: priceChangePercentage.toString(),
+        currentPrice: price,
+        priceChangePercentage: priceChangePercentage,
         lastUpdated: timestamp,
       })
       .where(eq(products.productId, productId));
