@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 import { paginationSchema, createPage } from '@/types/pagination.js';
 import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
+import { client } from '@/database/client.js';
+import { eq, count } from 'drizzle-orm';
 
 const paramSchema = productSchema.pick({ productId: true });
 
@@ -14,25 +16,36 @@ export const listPriceHistoriesRoute = new Hono().get(
   async c => {
     const { productId } = c.req.valid('param');
     const { pageNumber, pageSize } = c.req.valid('query');
+    const offset = (pageNumber - 1) * pageSize;
 
-    const product = products.find(p => p.productId === productId);
-    if (!product) {
+    const existing = await client
+      .select()
+      .from(products)
+      .where(eq(products.productId, productId))
+      .limit(1);
+
+    if (existing.length === 0) {
       return c.json(
         createResourceNotFoundPD(c.req.path, `Product ${productId} not found`),
         StatusCodes.NOT_FOUND
       );
     }
 
-    const filteredPriceHistories = priceHistories.filter(
-      ph => ph.productId === productId
-    );
+    const [{ totalCount }] = await client
+      .select({ totalCount: count() })
+      .from(priceHistories)
+      .where(eq(priceHistories.productId, productId));
 
-    const totalCount = filteredPriceHistories.length;
-    const startIndex = (pageNumber - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const page = filteredPriceHistories.slice(startIndex, endIndex);
+    const items = await client
+      .select()
+      .from(priceHistories)
+      .where(eq(priceHistories.productId, productId))
+      .orderBy(priceHistories.timestamp)
+      .limit(pageSize)
+      .offset(offset);
+
     return c.json(
-      createPage(page, totalCount, pageNumber, pageSize),
+      createPage(items, totalCount, pageNumber, pageSize),
       StatusCodes.OK
     );
   }

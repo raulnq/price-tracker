@@ -1,0 +1,178 @@
+{
+  "id": "c87215ee-14c3-4959-a26e-48c3396275bd",
+  "prevId": "ce5ebc11-58e1-4826-91d3-e81f28bb1a78",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "price_tracker.price_histories": {
+      "name": "price_histories",
+      "schema": "price_tracker",
+      "columns": {
+        "pricehistoryid": {
+          "name": "pricehistoryid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "productid": {
+          "name": "productid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "price_histories_productid_products_productid_fk": {
+          "name": "price_histories_productid_products_productid_fk",
+          "tableFrom": "price_histories",
+          "tableTo": "products",
+          "schemaTo": "price_tracker",
+          "columnsFrom": [
+            "productid"
+          ],
+          "columnsTo": [
+            "productid"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "price_tracker.products": {
+      "name": "products",
+      "schema": "price_tracker",
+      "columns": {
+        "productid": {
+          "name": "productid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "storeid": {
+          "name": "storeid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currentprice": {
+          "name": "currentprice",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pricechangepercentage": {
+          "name": "pricechangepercentage",
+          "type": "numeric(5, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastupdated": {
+          "name": "lastupdated",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "products_storeid_stores_storeid_fk": {
+          "name": "products_storeid_stores_storeid_fk",
+          "tableFrom": "products",
+          "tableTo": "stores",
+          "schemaTo": "price_tracker",
+          "columnsFrom": [
+            "storeid"
+          ],
+          "columnsTo": [
+            "storeid"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "price_tracker.stores": {
+      "name": "stores",
+      "schema": "price_tracker",
+      "columns": {
+        "storeid": {
+          "name": "storeid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -3,6 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { stores, storeSchema } from './store.js';
 import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
+import { client } from '@/database/client.js';
+import { eq } from 'drizzle-orm';
 
 const paramSchema = storeSchema.pick({ storeId: true });
 const bodySchema = storeSchema.pick({ name: true, url: true });
@@ -13,16 +15,24 @@ export const editRoute = new Hono().put(
   zValidator('json', bodySchema),
   async c => {
     const { storeId } = c.req.valid('param');
-    const { name, url } = c.req.valid('json');
-    const store = stores.find(s => s.storeId === storeId);
-    if (!store) {
+    const data = c.req.valid('json');
+    const existing = await client
+      .select()
+      .from(stores)
+      .where(eq(stores.storeId, storeId))
+      .limit(1);
+
+    if (existing.length === 0) {
       return c.json(
         createResourceNotFoundPD(c.req.path, `Store ${storeId} not found`),
         StatusCodes.NOT_FOUND
       );
     }
-    store.name = name;
-    store.url = url;
+    const [store] = await client
+      .update(stores)
+      .set(data)
+      .where(eq(stores.storeId, storeId))
+      .returning();
     return c.json(store, StatusCodes.OK);
   }
 );
