@@ -11,10 +11,11 @@ import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 import { client } from '@/database/client.js';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 const paramSchema = productSchema.pick({ productId: true });
 const bodySchema = priceHistorySchema.pick({ price: true });
-
+export type AddPriceHistory = z.infer<typeof bodySchema>;
 export const addPriceHistoryRoute = new Hono().post(
   '/:productId/prices',
   zValidator('param', paramSchema),

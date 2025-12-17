@@ -5,10 +5,11 @@ import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 import { client } from '@/database/client.js';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 const paramSchema = storeSchema.pick({ storeId: true });
 const bodySchema = storeSchema.pick({ name: true, url: true });
-
+export type EditStore = z.infer<typeof bodySchema>;
 export const editRoute = new Hono().put(
   '/:storeId',
   zValidator('param', paramSchema),

@@ -4,9 +4,10 @@ import { StatusCodes } from 'http-status-codes';
 import { stores, storeSchema } from './store.js';
 import { zValidator } from '@/utils/validation.js';
 import { client } from '@/database/client.js';
+import { z } from 'zod';
 
 const schema = storeSchema.omit({ storeId: true });
-
+export type AddStore = z.infer<typeof schema>;
 export const addRoute = new Hono().post(
   '/',
   zValidator('json', schema),

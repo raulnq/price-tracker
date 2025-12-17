@@ -6,9 +6,9 @@ import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 import { client } from '@/database/client.js';
 import { eq, count } from 'drizzle-orm';
-
+import { z } from 'zod';
 const paramSchema = productSchema.pick({ productId: true });
-
+export type ListPriceHistories = z.infer<typeof paginationSchema>;
 export const listPriceHistoriesRoute = new Hono().get(
   '/:productId/prices',
   zValidator('param', paramSchema),
