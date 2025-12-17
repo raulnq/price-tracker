@@ -4,7 +4,7 @@ import type { Page } from '@/types/pagination.js';
 
 export const assertPage = <TResult>(page: Page<TResult>) => {
   return {
-    hasTotalCountAtLeast(expected: number) {
+    hasItemsCountAtLeast(expected: number) {
       assert.ok(page);
       assert.ok(
         page.items.length >= expected,

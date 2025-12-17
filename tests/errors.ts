@@ -3,8 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 
 export const emptyText = '';
 
-export const bigText = (lenght: number = 256): string => {
-  return 'a'.repeat(lenght);
+export const bigText = (length: number = 256): string => {
+  return 'a'.repeat(length);
 };
 
 const tooBigString = (maxLength: number): string =>
