@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
-import { addStore, listStores, wallmart } from './stores-dsl.js';
-import assert from 'node:assert';
+import { addStore, assertStore, listStores, wallmart } from './stores-dsl.js';
+import { assertPage } from '../assertions.js';
 
 describe('List Stores Endpoint', () => {
   test('should filter stores by name', async () => {
@@ -12,8 +12,8 @@ describe('List Stores Endpoint', () => {
       pageNumber: 1,
     });
 
-    assert.ok(page);
-    assert.ok(page.items.length >= 1);
+    assertPage(page).hasItemsCount(1);
+    assertStore(page.items[0]).isTheSameOf(store);
   });
 
   test('should return empty items when no stores match filter', async () => {
@@ -23,9 +23,6 @@ describe('List Stores Endpoint', () => {
       pageNumber: 1,
     });
 
-    assert.ok(page);
-    assert.strictEqual(page.items.length, 0);
-    assert.strictEqual(page.totalCount, 0);
-    assert.strictEqual(page.totalPages, 0);
+    assertPage(page).hasEmptyResult();
   });
 });

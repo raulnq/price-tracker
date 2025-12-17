@@ -6,7 +6,7 @@ import { type Store } from '@/features/stores/store.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
-import { assertStrictEqualProblemDocument } from '../utils.js';
+import { assertStrictEqualProblemDocument } from '../assertions.js';
 import type { EditStore } from '@/features/stores/edit-store.js';
 import type { ListStores } from '@/features/stores/list-stores.js';
 import type { Page } from '@/types/pagination.js';
@@ -62,11 +62,20 @@ export async function addStore(
   }
 }
 
-export const editStore = async (
+export async function editStore(
+  storeId: string,
+  input: AddStore
+): Promise<Store>;
+export async function editStore(
+  storeId: string,
+  input: AddStore,
+  expectedProblemDocument: ProblemDocument
+): Promise<ProblemDocument>;
+export async function editStore(
   storeId: string,
   input: EditStore,
   expectedProblemDocument?: ProblemDocument
-): Promise<Store | ProblemDocument> => {
+): Promise<Store | ProblemDocument> {
   const client = testClient(storeRoute);
   const response = await client.stores[':storeId'].$put({
     param: { storeId },
@@ -88,7 +97,7 @@ export const editStore = async (
     }
     return problemDocument;
   }
-};
+}
 
 export async function getStore(storeId: string): Promise<Store>;
 export async function getStore(
@@ -159,12 +168,7 @@ export async function listStores(
   }
 }
 
-interface StoreAssertions {
-  hasName(expected: string): StoreAssertions;
-  hasUrl(expected: string): StoreAssertions;
-}
-
-export const assertStore = (store: Store): StoreAssertions => {
+export const assertStore = (store: Store) => {
   return {
     hasName(expected: string) {
       assert.strictEqual(
@@ -181,6 +185,19 @@ export const assertStore = (store: Store): StoreAssertions => {
         `Expected url to be ${expected}, got ${store.url}`
       );
       return this;
+    },
+    hasStoreId(expected: string) {
+      assert.strictEqual(
+        store.storeId,
+        expected,
+        `Expected storeId to be ${expected}, got ${store.storeId}`
+      );
+      return this;
+    },
+    isTheSameOf(expected: Store) {
+      return this.hasStoreId(expected.storeId)
+        .hasName(expected.name)
+        .hasUrl(expected.url);
     },
   };
 };

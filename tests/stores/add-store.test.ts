@@ -5,7 +5,7 @@ import {
   bigText,
   createValidationError,
   validationError,
-} from '../utils.js';
+} from '../errors.js';
 describe('Add Store Endpoint', () => {
   test('should create a new store with valid data', async () => {
     const input = wallmart();
@@ -33,7 +33,7 @@ describe('Add Store Endpoint', () => {
         name: 'should reject missing store name',
         input: wallmart({ name: undefined }),
         expectedError: createValidationError([
-          validationError.required('name'),
+          validationError.requiredString('name'),
         ]),
       },
       {
@@ -62,7 +62,9 @@ describe('Add Store Endpoint', () => {
       {
         name: 'should reject missing URL',
         input: wallmart({ url: undefined }),
-        expectedError: createValidationError([validationError.required('url')]),
+        expectedError: createValidationError([
+          validationError.requiredString('url'),
+        ]),
       },
     ];
 

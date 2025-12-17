@@ -1,24 +1,23 @@
 import { test, describe } from 'node:test';
-import { addProduct, getProduct, laptop } from './products-dsl.js';
+import {
+  addProduct,
+  getProduct,
+  laptop,
+  assertProduct,
+} from './products-dsl.js';
 import { addStore, wallmart } from '../stores/stores-dsl.js';
 import {
   createValidationError,
   validationError,
   createNotFoundError,
-} from '../utils.js';
-import assert from 'node:assert';
+} from '../errors.js';
 
 describe('Get Product Endpoint', () => {
   test('should get an existing product by ID', async () => {
     const store = await addStore(wallmart());
     const createdProduct = await addProduct(laptop(store.storeId));
     const retrievedProduct = await getProduct(createdProduct.productId);
-
-    assert.strictEqual(retrievedProduct.productId, createdProduct.productId);
-    assert.strictEqual(retrievedProduct.name, createdProduct.name);
-    assert.strictEqual(retrievedProduct.url, createdProduct.url);
-    assert.strictEqual(retrievedProduct.currency, createdProduct.currency);
-    assert.strictEqual(retrievedProduct.storeId, createdProduct.storeId);
+    assertProduct(retrievedProduct).isTheSameOf(createdProduct);
   });
 
   test('should return 404 for non-existent product', async () => {

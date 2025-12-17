@@ -1,5 +1,11 @@
 import { test, describe } from 'node:test';
-import { addProduct, editProduct, laptop, phone } from './products-dsl.js';
+import {
+  addProduct,
+  assertProduct,
+  editProduct,
+  laptop,
+  phone,
+} from './products-dsl.js';
 import { addStore, wallmart } from '../stores/stores-dsl.js';
 import { type Product } from '@/features/products/product.js';
 import {
@@ -8,17 +14,22 @@ import {
   createValidationError,
   validationError,
   createNotFoundError,
-} from '../utils.js';
+} from '../errors.js';
 import type { EditProduct } from '@/features/products/edit-product.js';
 
 describe('Edit Product Endpoint', async () => {
   const store = await addStore(wallmart());
   test('should edit an existing product with valid data', async () => {
     const product = await addProduct(laptop(store.storeId));
-    await editProduct(product.productId, phone(store.storeId));
+    const input = phone(store.storeId);
+    const newProduct = await editProduct(product.productId, input);
+    assertProduct(newProduct)
+      .hasCurrency(input.currency)
+      .hasName(input.name)
+      .hasUrl(input.url);
   });
 
-  describe('Name validations', () => {
+  describe('Property validations', () => {
     const testCases = [
       {
         name: 'should reject empty product name',
@@ -50,7 +61,7 @@ describe('Edit Product Endpoint', async () => {
             currency: product.currency,
           }) as EditProduct,
         expectedError: createValidationError([
-          validationError.required('name'),
+          validationError.requiredString('name'),
         ]),
       },
       {
@@ -93,7 +104,9 @@ describe('Edit Product Endpoint', async () => {
             name: product.name,
             currency: product.currency,
           }) as EditProduct,
-        expectedError: createValidationError([validationError.required('url')]),
+        expectedError: createValidationError([
+          validationError.requiredString('url'),
+        ]),
       },
       {
         name: 'should reject empty product currency',
@@ -125,7 +138,7 @@ describe('Edit Product Endpoint', async () => {
             name: product.name,
           }) as EditProduct,
         expectedError: createValidationError([
-          validationError.required('currency'),
+          validationError.requiredString('currency'),
         ]),
       },
     ];

@@ -1,8 +1,13 @@
 import { test, describe } from 'node:test';
-import { addProduct, listProducts, laptop, phone } from './products-dsl.js';
+import {
+  addProduct,
+  listProducts,
+  laptop,
+  phone,
+  assertProduct,
+} from './products-dsl.js';
 import { addStore, wallmart } from '../stores/stores-dsl.js';
-import { type Store } from '@/features/stores/store.js';
-import assert from 'node:assert';
+import { assertPage } from '../assertions.js';
 
 describe('List Products Endpoint', () => {
   test('should filter products by name', async () => {
@@ -14,13 +19,13 @@ describe('List Products Endpoint', () => {
       name: product.name,
     });
 
-    assert.ok(page);
-    assert.ok(page.items.length >= 1);
+    assertPage(page).hasItemsCount(1);
+    assertProduct(page.items[0]).isTheSameOf(product);
   });
 
   test('should filter products by storeId', async () => {
-    const store = (await addStore(wallmart())) as Store;
-    await addProduct(phone(store.storeId));
+    const store = await addStore(wallmart());
+    const product = await addProduct(phone(store.storeId));
 
     const page = await listProducts({
       pageNumber: 1,
@@ -28,8 +33,8 @@ describe('List Products Endpoint', () => {
       storeId: store.storeId,
     });
 
-    assert.ok(page);
-    assert.ok(page.items.length >= 1);
+    assertPage(page).hasItemsCount(1);
+    assertProduct(page.items[0]).isTheSameOf(product);
   });
 
   test('should return empty items when no products match filter', async () => {
@@ -42,10 +47,7 @@ describe('List Products Endpoint', () => {
       pageSize: 10,
     });
 
-    assert.ok(page);
-    assert.strictEqual(page.items.length, 0);
-    assert.strictEqual(page.totalCount, 0);
-    assert.strictEqual(page.totalPages, 0);
+    assertPage(page).hasEmptyResult();
   });
 
   test('should handle multiple filters together', async () => {
@@ -59,7 +61,7 @@ describe('List Products Endpoint', () => {
       pageSize: 10,
     });
 
-    assert.ok(page);
-    assert.ok(page.items.length >= 1);
+    assertPage(page).hasItemsCount(1);
+    assertProduct(page.items[0]).isTheSameOf(product);
   });
 });

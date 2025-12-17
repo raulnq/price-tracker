@@ -1,5 +1,11 @@
 import { test, describe } from 'node:test';
-import { addStore, editStore, wallmart, nike } from './stores-dsl.js';
+import {
+  addStore,
+  editStore,
+  wallmart,
+  nike,
+  assertStore,
+} from './stores-dsl.js';
 import { type Store } from '@/features/stores/store.js';
 import {
   emptyText,
@@ -7,13 +13,15 @@ import {
   createValidationError,
   validationError,
   createNotFoundError,
-} from '../utils.js';
+} from '../errors.js';
 import type { EditStore } from '@/features/stores/edit-store.js';
 
 describe('Edit Store Endpoint', () => {
   test('should edit an existing store with valid data', async () => {
     const store = await addStore(wallmart());
-    await editStore(store.storeId, nike());
+    const input = nike();
+    const newStore = await editStore(store.storeId, input);
+    assertStore(newStore).hasName(input.name).hasUrl(input.url);
   });
 
   describe('Property validations', async () => {
@@ -36,7 +44,7 @@ describe('Edit Store Endpoint', () => {
         name: 'should reject missing store name',
         input: (store: Store) => ({ url: store.url }) as EditStore,
         expectedError: createValidationError([
-          validationError.required('name'),
+          validationError.requiredString('name'),
         ]),
       },
       {
@@ -66,7 +74,9 @@ describe('Edit Store Endpoint', () => {
       {
         name: 'should reject missing URL',
         input: (store: Store) => ({ name: store.name }) as EditStore,
-        expectedError: createValidationError([validationError.required('url')]),
+        expectedError: createValidationError([
+          validationError.requiredString('url'),
+        ]),
       },
     ];
     for (const { name, input, expectedError } of testCases) {
