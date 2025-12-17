@@ -7,6 +7,7 @@ import { stores } from '@/features/stores/store.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
 import { client } from '@/database/client.js';
 import { eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 const schema = productSchema.omit({
   productId: true,
@@ -14,7 +15,7 @@ const schema = productSchema.omit({
   priceChangePercentage: true,
   lastUpdated: true,
 });
-
+export type AddProduct = z.infer<typeof schema>;
 export const addRoute = new Hono().post(
   '/',
   zValidator('json', schema),

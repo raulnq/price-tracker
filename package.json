@@ -17,7 +17,8 @@
     "database:stop": "docker-compose stop database",
     "database:generate": "tsx ./node_modules/drizzle-kit/bin.cjs generate",
     "database:migrate": "tsx ./node_modules/drizzle-kit/bin.cjs migrate",
-    "database:studio": "tsx ./node_modules/drizzle-kit/bin.cjs studio"
+    "database:studio": "tsx ./node_modules/drizzle-kit/bin.cjs studio",
+    "test": "cross-env NODE_ENV=test tsx --import ./tests/setup.ts --test ./tests/**/*.test.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.5",
@@ -38,6 +39,7 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/prompt-cli": "^20.1.0",
     "@eslint/js": "^9.38.0",
+    "@faker-js/faker": "^10.1.0",
     "@types/node": "^20.11.17",
     "@types/pg": "^8.16.0",
     "cross-env": "^10.1.0",

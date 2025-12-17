@@ -11,7 +11,7 @@ const schema = paginationSchema.extend({
   name: z.string().optional(),
   storeId: z.uuidv7().optional(),
 });
-
+export type ListProducts = z.infer<typeof schema>;
 export const listRoute = new Hono().get(
   '/',
   zValidator('query', schema),
