@@ -6,9 +6,24 @@ import { onNotFound } from './middlewares/on-not-found.js';
 import { bearerAuth } from 'hono/bearer-auth';
 import { ENV } from './env.js';
 import { secureHeaders } from 'hono/secure-headers';
+import { pinoLogger } from 'hono-pino';
+import { logger } from '@/utils/logger.js';
 
 export const app = new Hono({ strict: false });
 
+app.use(
+  pinoLogger({
+    pino: logger,
+    http: {
+      onReqBindings: c => ({
+        req: {
+          method: c.req.method,
+          path: c.req.path,
+        },
+      }),
+    },
+  })
+);
 app.use(secureHeaders());
 if (ENV.TOKEN) {
   app.use('/api/*', bearerAuth({ token: ENV.TOKEN }));

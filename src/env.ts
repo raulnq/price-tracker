@@ -9,6 +9,10 @@ const ENVSchema = z.object({
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string(),
   TOKEN: z.string().optional(),
+  SEQ_URL: z.string().optional(),
+  LOG_LEVEL: z
+    .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
+    .default('info'),
 });
 
 expand(config());
