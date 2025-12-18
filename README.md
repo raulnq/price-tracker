@@ -1,235 +1,224 @@
-# Node Hono API Template
+# Price Tracker
 
-A modern, production-ready Node.js API template built with [Hono](https://hono.dev/) framework, TypeScript, and best practices for rapid API development.
+A price tracking API built with [Hono](https://hono.dev/), TypeScript, PostgreSQL, and AI-powered price extraction using Google Gemini.
 
-## ✨ Features
+## Features
 
-- **🚀 Hono Framework** - Ultra-fast, lightweight web framework optimized for edge runtimes
-- **📘 TypeScript** - Full TypeScript support with strict type checking
-- **🔒 Environment Validation** - Type-safe environment variables with Zod
-- **🎨 Code Quality Tools** - ESLint, Prettier, and Commitlint pre-configured
-- **🔄 Hot Reload** - Fast development with tsx watch mode
-- **📦 Path Aliases** - Clean imports with `@/` aliases
-- **🪝 Git Hooks** - Automated linting and commit validation with Husky
-- **🛠️ VS Code Integration** - Optimized workspace settings and debug configuration
+- **REST API** - Manage stores, products, and price histories
+- **Automated Price Scraping** - Playwright-based web scraping with scheduled execution
+- **AI Price Extraction** - Google Gemini extracts prices from webpage content
+- **Structured Logging** - Pino logger with optional Seq integration
+- **PostgreSQL Database** - Drizzle ORM for type-safe database operations
+- **Bearer Token Auth** - Optional API authentication
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 24.x or higher
-- npm or yarn
+- PostgreSQL database
+- Google Gemini API key (for price scraping)
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Use this template
-
-Click the **"Use this template"** button on GitHub to create a new repository from this template.
-
-### 2. Clone your repository
-
-```bash
-git clone https://github.com/raulnq/node-hono-api.git
-cd your-repo-name
-```
-
-### 3. Install dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 4. Set up environment variables
-
-Create a `.env` file in the root directory:
+### 2. Install Playwright browsers
 
 ```bash
-# Environment
-NODE_ENV=development
-
-# Server
-PORT=3000
-
-# Add your additional environment variables here
+npx playwright install chromium
 ```
 
-### 5. Run development server
+### 3. Set up environment variables
+
+Create a `.env` file:
+
+```bash
+# Server
+NODE_ENV=development
+PORT=3000
+
+# Database
+DATABASE_URL=postgresql://myuser:mypassword@localhost:5432/mydb
+
+# Authentication (optional)
+TOKEN=your-bearer-token
+
+# Logging
+LOG_LEVEL=info
+SEQ_URL=http://localhost:5341  # Optional: Seq server for centralized logging
+
+# Price Scraping
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-2.5-flash
+CRON_EXPRESSION=0 */12 * * *  # Every 12 hours
+```
+
+### 4. Start the database
+
+```bash
+npm run database:up
+```
+
+### 5. Run database migrations
+
+```bash
+npm run database:migrate
+```
+
+### 6. Start the development server
 
 ```bash
 npm run dev
 ```
 
-The server will start at `http://localhost:3000`
+The API will be available at `http://localhost:3000`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-node-hono-api/
+price-tracker/
 ├── src/
-│   ├── env.ts           # Environment variable validation
-│   └── index.ts         # Application entry point
-├── dist/                # Compiled output (generated)
-├── .vscode/             # VS Code configuration
-│   ├── launch.json      # Debug configuration
-│   └── settings.json    # Workspace settings
-├── .husky/              # Git hooks
-├── commitlint.config.ts # Commit message linting
-├── eslint.config.ts     # ESLint configuration
-├── prettier.config.ts   # Prettier configuration
-├── tsconfig.json        # TypeScript configuration
-└── package.json         # Project dependencies and scripts
+│   ├── app.ts                 # Hono app configuration
+│   ├── index.ts               # API server entry point
+│   ├── scheduler.ts           # Price scraping scheduler entry point
+│   ├── env.ts                 # Environment validation
+│   ├── database/
+│   │   ├── client.ts          # Database client
+│   │   └── schemas.ts         # Drizzle schemas
+│   ├── features/
+│   │   ├── products/          # Products & price history endpoints
+│   │   ├── stores/            # Stores endpoints
+│   │   └── scraper/           # Price scraping logic
+│   ├── middlewares/           # Error handling, not found
+│   └── utils/                 # Logger, validation, problem documents
+├── tests/                     # Integration tests
+├── docker-compose.yml         # PostgreSQL & Seq services
+└── drizzle.config.ts          # Drizzle configuration
 ```
 
-## 🛠️ Available Scripts
+## Available Scripts
 
-| Script                 | Description                              |
-| ---------------------- | ---------------------------------------- |
-| `npm run dev`          | Start development server with hot reload |
-| `npm run build`        | Build for production                     |
-| `npm start`            | Run production build                     |
-| `npm run format`       | Format code with Prettier                |
-| `npm run format:check` | Check code formatting                    |
-| `npm run lint`         | Lint code with ESLint                    |
-| `npm run lint:fix`     | Fix linting issues                       |
-| `npm run lint:format`  | Fix linting and format code              |
-| `npm run commit`       | Interactive commit with Commitlint       |
+| Script                      | Description                                   |
+| --------------------------- | --------------------------------------------- |
+| `npm run dev`               | Start API server with hot reload              |
+| `npm run dev:scheduler`     | Start price scraper scheduler with hot reload |
+| `npm run build`             | Build for production                          |
+| `npm start`                 | Run production API server                     |
+| `npm run start:scheduler`   | Run production scheduler                      |
+| `npm test`                  | Run tests                                     |
+| `npm run database:up`       | Start PostgreSQL container                    |
+| `npm run database:down`     | Stop and remove database container            |
+| `npm run database:generate` | Generate Drizzle migrations                   |
+| `npm run database:migrate`  | Run database migrations                       |
+| `npm run database:studio`   | Open Drizzle Studio                           |
+| `npm run lint`              | Lint code                                     |
+| `npm run format`            | Format code                                   |
 
-## 🔧 Configuration
+## API Endpoints
 
-### Environment Variables
+### Stores
 
-Environment variables are validated using Zod in `src/env.ts`. Add your schema:
+| Method | Endpoint               | Description     |
+| ------ | ---------------------- | --------------- |
+| GET    | `/api/stores`          | List stores     |
+| GET    | `/api/stores/:storeId` | Get store by ID |
+| POST   | `/api/stores`          | Create store    |
+| PUT    | `/api/stores/:storeId` | Update store    |
 
-```typescript
-const ENVSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
-  PORT: z.coerce.number().default(3000),
-  // Add more variables here
-});
-```
+### Products
 
-### Path Aliases
+| Method | Endpoint                   | Description       |
+| ------ | -------------------------- | ----------------- |
+| GET    | `/api/products`            | List products     |
+| GET    | `/api/products/:productId` | Get product by ID |
+| POST   | `/api/products`            | Create product    |
+| PUT    | `/api/products/:productId` | Update product    |
 
-Import aliases are configured in `tsconfig.json`:
+### Price History
 
-```typescript
-// Instead of: import { helper } from '../../../utils/helper'
-import { helper } from '@/utils/helper';
-```
+| Method | Endpoint                          | Description        |
+| ------ | --------------------------------- | ------------------ |
+| GET    | `/api/products/:productId/prices` | List price history |
+| POST   | `/api/products/:productId/prices` | Add price entry    |
 
-### ESLint & Prettier
+### Health
 
-The project uses:
+| Method | Endpoint | Description  |
+| ------ | -------- | ------------ |
+| GET    | `/live`  | Health check |
 
-- **ESLint** with TypeScript recommended rules
-- **Prettier** for code formatting
-- **Automatic formatting** on save (VS Code)
-- **Automatic lint fixes** on save (VS Code)
+## Environment Variables
 
-### Commit Messages
+| Variable          | Required | Default            | Description                                   |
+| ----------------- | -------- | ------------------ | --------------------------------------------- |
+| `NODE_ENV`        | No       | `development`      | Environment mode                              |
+| `PORT`            | No       | `3000`             | Server port                                   |
+| `DATABASE_URL`    | Yes      | -                  | PostgreSQL connection string                  |
+| `TOKEN`           | No       | -                  | Bearer token for API auth                     |
+| `LOG_LEVEL`       | No       | `info`             | Log level (trace/debug/info/warn/error/fatal) |
+| `SEQ_URL`         | No       | -                  | Seq server URL for centralized logging        |
+| `GEMINI_API_KEY`  | No       | -                  | Google Gemini API key (required for scraping) |
+| `GEMINI_MODEL`    | No       | `gemini-2.5-flash` | Gemini model to use                           |
+| `CRON_EXPRESSION` | No       | `0 */12 * * *`     | Scraper schedule (cron format)                |
 
-Commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format:
+## Price Scraper
+
+The scheduler runs as a separate process that periodically scrapes prices from product URLs:
+
+1. Fetches all products from the database
+2. Uses Playwright to load each product page
+3. Extracts visible text content
+4. Sends content to Google Gemini for price extraction
+5. Updates price history and current price
+
+### Running the Scheduler
 
 ```bash
-feat: add user authentication
-fix(api): resolve CORS issue
-docs: update README
+# Development
+npm run dev:scheduler
+
+# Production
+npm run start:scheduler
 ```
 
-Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`, `perf`, `revert`
+## Logging
 
-## 🏗️ Building Your API
+The application uses Pino for structured JSON logging:
 
-### Adding Routes
+- **Console**: Pretty-printed output in development
+- **Seq**: Optional centralized logging when `SEQ_URL` is configured
 
-```typescript
-// src/index.ts
-import { Hono } from 'hono';
-
-const app = new Hono();
-
-app.get('/api/users', c => {
-  return c.json({ users: [] });
-});
-
-app.post('/api/users', async c => {
-  const body = await c.req.json();
-  return c.json({ success: true, data: body }, 201);
-});
-```
-
-### Adding Middleware
-
-```typescript
-import { logger } from 'hono/logger';
-import { cors } from 'hono/cors';
-
-app.use(logger());
-app.use('/api/*', cors());
-```
-
-### Error Handling
-
-```typescript
-app.onError((err, c) => {
-  console.error(`${err}`);
-  return c.json({ error: 'Internal Server Error' }, 500);
-});
-```
-
-## 🧪 Testing
-
-Add your testing setup (Jest, Vitest, etc.) as needed for your project.
-
-## 📦 Deployment
-
-### Build for production
+Start Seq locally:
 
 ```bash
-npm run build
+npm run seq:up
 ```
 
-### Start production server
+Access Seq UI at `http://localhost:8080`
+
+## Docker Services
 
 ```bash
-npm start
+# Start PostgreSQL
+npm run database:up
+
+# Start Seq (logging)
+npm run seq:up
+
+# Start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
 ```
 
-### Deploy to your platform
+## Testing
 
-The built application in `dist/` can be deployed to:
+```bash
+npm test
+```
 
-- **Node.js servers**
-- **Docker containers**
-- **Cloud platforms** (AWS, Azure, GCP)
-- **PaaS** (Heroku, Railway, Render)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Hono](https://hono.dev/) - The web framework
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Zod](https://zod.dev/) - Schema validation
-- Community contributors and maintainers
-
-## 📚 Resources
-
-- [Hono Documentation](https://hono.dev/docs)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Commitlint](https://commitlint.js.org/)
-- [ESLint Rules](https://eslint.org/docs/latest/rules/)
-
----
-
-**Happy coding! 🚀**
+Tests use Node.js built-in test runner with a test database.

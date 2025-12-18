@@ -13,6 +13,9 @@ const ENVSchema = z.object({
   LOG_LEVEL: z
     .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
     .default('info'),
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().optional().default('gemini-2.5-flash'),
+  CRON_EXPRESSION: z.string().default('0 */12 * * *'),
 });
 
 expand(config());
