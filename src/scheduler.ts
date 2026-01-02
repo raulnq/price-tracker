@@ -82,7 +82,7 @@ async function task(): Promise<void> {
       'Task completed'
     );
   } catch (error) {
-    logger.error({ error }, 'Task failed');
+    logger.error(error, 'Task failed');
   } finally {
     isRunning = false;
   }

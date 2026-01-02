@@ -97,10 +97,7 @@ export async function scrapeProduct(
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
 
-    logger.error(
-      { productId: product.productId, error },
-      'Error scraping product'
-    );
+    logger.error(error, `Error scraping product ${product.productId}`);
 
     return {
       productId: product.productId,
