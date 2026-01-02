@@ -6,6 +6,8 @@ import {
   priceHistories,
   productSchema,
   priceHistorySchema,
+  type PriceHistory,
+  type Product,
 } from './product.js';
 import { zValidator } from '@/utils/validation.js';
 import { createResourceNotFoundPD } from '@/utils/problem-document.js';
@@ -37,41 +39,50 @@ export const addPriceHistoryRoute = new Hono().post(
       );
     }
 
-    const timestamp = new Date();
-
-    const priceHistory = await client.transaction(async tx => {
-      const [priceHistory] = await tx
-        .insert(priceHistories)
-        .values({
-          priceHistoryId: v7(),
-          productId,
-          timestamp,
-          price: price,
-        })
-        .returning();
-
-      const currentPrice = product.currentPrice;
-      let priceChangePercentage = 0;
-      if (
-        currentPrice !== null &&
-        currentPrice !== undefined &&
-        currentPrice > 0
-      ) {
-        priceChangePercentage = ((price - currentPrice) / currentPrice) * 100;
-      }
-
-      await tx
-        .update(products)
-        .set({
-          currentPrice: price,
-          priceChangePercentage,
-          lastUpdated: timestamp,
-        })
-        .where(eq(products.productId, productId));
-
-      return priceHistory;
-    });
+    const priceHistory = await addPriceHistory(product, price);
 
     return c.json(priceHistory, StatusCodes.CREATED);
   }
 );
+
+export const addPriceHistory = async (
+  product: Product,
+  price: number
+): Promise<PriceHistory> => {
+  const timestamp = new Date();
+
+  const priceHistory = await client.transaction(async tx => {
+    const [priceHistory] = await tx
+      .insert(priceHistories)
+      .values({
+        priceHistoryId: v7(),
+        productId: product.productId,
+        timestamp,
+        price: price,
+      })
+      .returning();
+
+    const currentPrice = product.currentPrice;
+    let priceChangePercentage = 0;
+    if (
+      currentPrice !== null &&
+      currentPrice !== undefined &&
+      currentPrice > 0
+    ) {
+      priceChangePercentage = ((price - currentPrice) / currentPrice) * 100;
+    }
+
+    await tx
+      .update(products)
+      .set({
+        currentPrice: price,
+        priceChangePercentage,
+        lastUpdated: timestamp,
+      })
+      .where(eq(products.productId, product.productId));
+
+    return priceHistory;
+  });
+
+  return priceHistory;
+};
