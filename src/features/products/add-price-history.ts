@@ -39,18 +39,25 @@ export const addPriceHistoryRoute = new Hono().post(
       );
     }
 
-    const priceHistory = await addPriceHistory(product, price);
+    const result = await addPriceHistory(product, price);
 
-    return c.json(priceHistory, StatusCodes.CREATED);
+    return c.json(result.priceHistory, StatusCodes.CREATED);
   }
 );
+
+export type AddPriceHistoryResult = {
+  priceHistory: PriceHistory;
+  priceChangePercentage: number;
+  previousPrice: number | null;
+};
 
 export const addPriceHistory = async (
   product: Product,
   price: number
-): Promise<PriceHistory> => {
+): Promise<AddPriceHistoryResult> => {
   const timestamp = new Date();
-
+  const previousPrice = product.currentPrice;
+  let priceChangePercentage = 0;
   const priceHistory = await client.transaction(async tx => {
     const [priceHistory] = await tx
       .insert(priceHistories)
@@ -62,14 +69,8 @@ export const addPriceHistory = async (
       })
       .returning();
 
-    const currentPrice = product.currentPrice;
-    let priceChangePercentage = 0;
-    if (
-      currentPrice !== null &&
-      currentPrice !== undefined &&
-      currentPrice > 0
-    ) {
-      priceChangePercentage = ((price - currentPrice) / currentPrice) * 100;
+    if (previousPrice !== null && previousPrice > 0) {
+      priceChangePercentage = ((price - previousPrice) / previousPrice) * 100;
     }
 
     await tx
@@ -84,5 +85,9 @@ export const addPriceHistory = async (
     return priceHistory;
   });
 
-  return priceHistory;
+  return {
+    priceHistory,
+    priceChangePercentage,
+    previousPrice,
+  };
 };

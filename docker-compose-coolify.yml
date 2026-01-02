@@ -37,10 +37,12 @@ services:
       dockerfile: Dockerfile
       target: scheduler
     exclude_from_hc: true
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL:?}
       - GEMINI_API_KEY=${GEMINI_API_KEY:?}
+      - MAILTRAP_API_TOKEN=${MAILTRAP_API_TOKEN:?}
     depends_on:
       migrator:
         condition: service_completed_successfully
