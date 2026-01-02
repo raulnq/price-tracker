@@ -3,6 +3,15 @@ import { ENV } from '@/env.js';
 import { logger } from '@/utils/logger.js';
 import type { Product } from '@/features/products/product.js';
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 let client: MailtrapClient | null = null;
 
 if (ENV.MAILTRAP_API_TOKEN) {
@@ -57,16 +66,19 @@ export async function sendPriceDropSummaryEmail(
         const formattedPercentage = Math.abs(
           drop.priceChangePercentage
         ).toFixed(2);
+        const safeName = escapeHtml(drop.product.name);
+        const safeUrl = escapeHtml(drop.product.url);
+        const safeCurrency = escapeHtml(drop.product.currency);
         return `
         <tr>
           <td style="padding: 15px; border-bottom: 1px solid #eee;">
-            <a href="${drop.product.url}" style="color: #333; text-decoration: none; font-weight: bold;">${drop.product.name}</a>
+            <a href="${safeUrl}" style="color: #333; text-decoration: none; font-weight: bold;">${safeName}</a>
           </td>
           <td style="padding: 15px; border-bottom: 1px solid #eee; text-align: center;">
-            <span style="color: #999; text-decoration: line-through;">${drop.product.currency} ${formattedPrevious}</span>
+            <span style="color: #999; text-decoration: line-through;">${safeCurrency} ${formattedPrevious}</span>
           </td>
           <td style="padding: 15px; border-bottom: 1px solid #eee; text-align: center;">
-            <span style="color: #4CAF50; font-weight: bold;">${drop.product.currency} ${formattedNew}</span>
+            <span style="color: #4CAF50; font-weight: bold;">${safeCurrency} ${formattedNew}</span>
           </td>
           <td style="padding: 15px; border-bottom: 1px solid #eee; text-align: center;">
             <span style="background-color: #4CAF50; color: white; padding: 4px 8px; border-radius: 4px; font-size: 14px;">-${formattedPercentage}%</span>
