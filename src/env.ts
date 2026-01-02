@@ -16,6 +16,10 @@ const ENVSchema = z.object({
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional().default('gemini-2.5-flash'),
   CRON_EXPRESSION: z.string().default('0 */12 * * *'),
+  MAILTRAP_API_TOKEN: z.string().optional(),
+  ALERT_EMAIL_TO: z.string().optional().default('raulnq@gmail.com'),
+  ALERT_EMAIL_FROM: z.string().optional().default('alerts@raulnq.win'),
+  PRICE_DROP_THRESHOLD: z.coerce.number().optional().default(0),
 });
 
 expand(config());

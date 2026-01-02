@@ -2,9 +2,13 @@ import { ENV } from '@/env.js';
 import { logger } from '@/utils/logger.js';
 import cron from 'node-cron';
 import { scrapeProducts } from './features/scraper/scraper.js';
+import {
+  sendPriceDropSummaryEmail,
+  type PriceDrop,
+} from './utils/email-client.js';
 
 process.on('uncaughtException', err => {
-  logger.fatal({ err }, 'Uncaught exception');
+  logger.fatal(err, 'Uncaught exception');
   process.exit(1);
 });
 
@@ -81,6 +85,28 @@ async function task(): Promise<void> {
       },
       'Task completed'
     );
+
+    const priceDrops: PriceDrop[] = results
+      .filter(
+        r =>
+          r.success &&
+          r.priceChangePercentage !== undefined &&
+          r.priceChangePercentage < -ENV.PRICE_DROP_THRESHOLD &&
+          r.product &&
+          r.previousPrice !== null &&
+          r.previousPrice !== undefined &&
+          r.price !== null
+      )
+      .map(r => ({
+        product: r.product!,
+        previousPrice: r.previousPrice!,
+        newPrice: r.price!,
+        priceChangePercentage: r.priceChangePercentage!,
+      }));
+
+    if (priceDrops.length > 0) {
+      await sendPriceDropSummaryEmail(priceDrops);
+    }
   } catch (error) {
     logger.error(error, 'Task failed');
   } finally {

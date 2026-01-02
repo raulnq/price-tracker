@@ -8,6 +8,9 @@ import { addPriceHistory } from '@/features/products/add-price-history.js';
 export type ScrapeResult = ExtractedPrice & {
   productId: string;
   success: boolean;
+  priceChangePercentage?: number;
+  previousPrice?: number | null;
+  product: Product;
 };
 
 async function fetchPageContent(
@@ -60,13 +63,14 @@ export async function scrapeProduct(
     );
 
     if (extracted.price !== null && extracted.price > 0) {
-      await addPriceHistory(product, extracted.price);
+      const result = await addPriceHistory(product, extracted.price);
 
       const duration = Date.now() - startTime;
       logger.info(
         {
           productId: product.productId,
           price: extracted.price,
+          priceChangePercentage: result.priceChangePercentage,
           durationMs: duration,
         },
         'Successfully scraped and updated price'
@@ -76,6 +80,9 @@ export async function scrapeProduct(
         productId: product.productId,
         success: true,
         price: extracted.price,
+        priceChangePercentage: result.priceChangePercentage,
+        previousPrice: result.previousPrice,
+        product,
       };
     }
 
@@ -92,6 +99,7 @@ export async function scrapeProduct(
       success: false,
       price: null,
       error: extracted.error || 'Failed to extract price',
+      product,
     };
   } catch (error) {
     const errorMessage =
@@ -104,6 +112,7 @@ export async function scrapeProduct(
       success: false,
       price: null,
       error: errorMessage,
+      product,
     };
   }
 }
