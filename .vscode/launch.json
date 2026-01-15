@@ -5,9 +5,10 @@
       "type": "node",
       "request": "launch",
       "name": "Debug TypeScript",
-      "program": "${workspaceFolder}/dist/index.js",
+      "program": "${workspaceFolder}/backend/dist/index.js",
       "preLaunchTask": "npm: build",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "cwd": "${workspaceFolder}/backend",
+      "outFiles": ["${workspaceFolder}/backend/dist/**/*.js"],
       "sourceMaps": true
     }
   ]

@@ -1,7 +1,7 @@
 services:
   migrator:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: migrator
     restart: no
@@ -11,7 +11,7 @@ services:
       - DATABASE_URL=${DATABASE_URL:?}
   api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: api
     expose:
@@ -33,7 +33,7 @@ services:
         condition: service_completed_successfully
   scheduler:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: scheduler
     exclude_from_hc: true

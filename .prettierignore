@@ -1,3 +1,3 @@
-dist/
-package-lock.json
-src/database/migrations
+**/dist/
+**/package-lock.json
+backend/src/database/migrations
