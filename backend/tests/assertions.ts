@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { ProblemDocument } from 'http-problem-details';
-import type { Page } from '@/types/pagination.js';
+import type { Page } from '#/types/pagination.js';
 
 export const assertPage = <TResult>(page: Page<TResult>) => {
   return {

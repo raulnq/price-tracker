@@ -7,7 +7,7 @@ import {
   phone,
 } from './products-dsl.js';
 import { addStore, wallmart } from '../stores/stores-dsl.js';
-import { type Product } from '@/features/products/product.js';
+import { type Product } from '#/features/products/product.js';
 import {
   emptyText,
   bigText,
@@ -15,7 +15,7 @@ import {
   validationError,
   createNotFoundError,
 } from '../errors.js';
-import type { EditProduct } from '@/features/products/edit-product.js';
+import type { EditProduct } from '#/features/products/edit-product.js';
 
 describe('Edit Product Endpoint', async () => {
   const store = await addStore(wallmart());

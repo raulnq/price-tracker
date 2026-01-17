@@ -21,9 +21,9 @@
     "noErrorTruncation": true,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "#/*": ["./src/*"]
     }
   },
   "exclude": ["**/node_modules", "**/.*/", "dist"],
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["drizzle.config.ts", "src/**/*", "tests/**/*"]
 }

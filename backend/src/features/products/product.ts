@@ -6,7 +6,7 @@ import {
   numeric,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { stores } from '@/features/stores/store.js';
+import { stores } from '#/features/stores/store.js';
 
 export const productSchema = z.object({
   storeId: z.uuidv7(),

@@ -1,7 +1,7 @@
-import { createInternalServerErrorPD } from '@/utils/problem-document.js';
+import { createInternalServerErrorPD } from '#/utils/problem-document.js';
 import type { ErrorHandler } from 'hono';
 import { StatusCodes } from 'http-status-codes';
-import { logger } from '@/utils/logger.js';
+import { logger } from '#/utils/logger.js';
 
 export const onError: ErrorHandler = (_err, c) => {
   logger.error(_err, 'Unhandled error');

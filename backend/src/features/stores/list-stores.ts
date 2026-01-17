@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
 import { stores } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { paginationSchema, createPage } from '@/types/pagination.js';
+import { paginationSchema, createPage } from '#/types/pagination.js';
 import { z } from 'zod';
-import { zValidator } from '@/utils/validation.js';
-import { client } from '@/database/client.js';
+import { zValidator } from '#/utils/validation.js';
+import { client } from '#/database/client.js';
 import { like, count, SQL, and } from 'drizzle-orm';
 
 const schema = paginationSchema.extend({

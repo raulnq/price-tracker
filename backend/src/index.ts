@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server';
-import { ENV } from '@/env.js';
-import { app } from './app.js';
-import { logger } from '@/utils/logger.js';
+import { ENV } from '#/env.js';
+import { app } from '#/app.js';
+import { logger } from './utils/logger.js';
 
 process.on('uncaughtException', err => {
   logger.fatal(err, 'Uncaught exception');

@@ -9,7 +9,7 @@ import {
   createNotFoundError,
 } from '../errors.js';
 
-import type { AddProduct } from '@/features/products/add-product.js';
+import type { AddProduct } from '#/features/products/add-product.js';
 
 describe('Add Product Endpoint', async () => {
   const store = await addStore(wallmart());

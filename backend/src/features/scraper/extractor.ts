@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ENV } from '@/env.js';
-import { logger } from '@/utils/logger.js';
+import { ENV } from '#/env.js';
+import { logger } from '#/utils/logger.js';
 
 export type ExtractedPrice = {
   price: number | null;

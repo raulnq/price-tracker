@@ -1,7 +1,7 @@
 import { ProblemDocument } from 'http-problem-details';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
-import { ENV } from '@/env.js';
+import { ENV } from '#/env.js';
 import type { HTTPResponseError } from 'hono/types';
 
 export const createResourceNotFoundPD = (path: string, detail: string) => {
@@ -55,4 +55,14 @@ export const createValidationErrorPD = (
       })),
     }
   );
+};
+
+export const createUnauthorizedPD = (path: string) => {
+  return new ProblemDocument({
+    type: '/problems/unauthorized',
+    title: 'Unauthorized',
+    status: StatusCodes.UNAUTHORIZED,
+    detail: 'Authentication is required to access this resource',
+    instance: path,
+  });
 };

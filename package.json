@@ -8,7 +8,10 @@
   ],
   "scripts": {
     "dev:backend": "npm run dev -w @price-tracker/backend",
+    "dev:frontend": "npm run dev -w @price-tracker/frontend",
+    "preview:frontend": "npm run preview -w @price-tracker/frontend",
     "build:backend": "npm run build -w @price-tracker/backend",
+    "build:frontend": "npm run build -w @price-tracker/frontend",
     "start:backend": "npm run start -w @price-tracker/backend",
     "start:scheduler": "npm run start:scheduler -w @price-tracker/backend",
     "format": "prettier --write .",
@@ -16,7 +19,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:format": "npm run lint:fix && npm run format",
-    "prepare": "husky|| true",
+    "prepare": "husky || true",
     "commit": "commit",
     "database:up": "docker-compose up database -d",
     "database:down": "docker-compose down database",
@@ -31,9 +34,12 @@
     "@eslint/js": "^9.38.0",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.46.2"
   }
 }
