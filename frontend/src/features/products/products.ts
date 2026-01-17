@@ -24,7 +24,14 @@ export async function listProducts(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to fetch products');
   }
-  return response.json() as Promise<Page<Product>>;
+  const data = await response.json();
+  return {
+    ...data,
+    items: data.items.map(item => ({
+      ...item,
+      lastUpdated: item.lastUpdated ? new Date(item.lastUpdated) : null,
+    })),
+  };
 }
 
 export async function getProduct(
@@ -39,33 +46,41 @@ export async function getProduct(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to fetch product');
   }
-  return response.json() as Promise<Product>;
+  const data = await response.json();
+  return {
+    ...data,
+    lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : null,
+  };
 }
 
 export async function createProduct(
-  data: AddProduct,
+  input: AddProduct,
   token?: string | null
 ): Promise<Product> {
   const response = await client.api.products.$post(
-    { json: data },
+    { json: input },
     { headers: token ? { Authorization: `Bearer ${token}` } : {} }
   );
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.detail || 'Failed to create product');
   }
-  return response.json() as Promise<Product>;
+  const data = await response.json();
+  return {
+    ...data,
+    lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : null,
+  };
 }
 
 export async function updateProduct(
   productId: string,
-  data: EditProduct,
+  input: EditProduct,
   token?: string | null
 ): Promise<Product> {
   const response = await client.api.products[':productId'].$put(
     {
       param: { productId },
-      json: data,
+      json: input,
     },
     { headers: token ? { Authorization: `Bearer ${token}` } : {} }
   );
@@ -73,5 +88,9 @@ export async function updateProduct(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to update product');
   }
-  return response.json() as Promise<Product>;
+  const data = await response.json();
+  return {
+    ...data,
+    lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : null,
+  };
 }

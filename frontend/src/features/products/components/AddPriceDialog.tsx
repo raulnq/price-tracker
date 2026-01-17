@@ -48,14 +48,16 @@ export function AddPriceDialog({
     }
   };
 
-  const handleClose = () => {
-    if (priceRef.current) priceRef.current.value = '';
-    setError(null);
-    onOpenChange(false);
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      if (priceRef.current) priceRef.current.value = '';
+      setError(null);
+    }
+    onOpenChange(open);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Price Entry</DialogTitle>
@@ -80,7 +82,11 @@ export function AddPriceDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={createMutation.isPending}>

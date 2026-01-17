@@ -23,7 +23,14 @@ export async function listPriceHistory(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to fetch price history');
   }
-  return response.json() as unknown as Promise<Page<PriceHistory>>;
+  const data = await response.json();
+  return {
+    ...data,
+    items: data.items.map(item => ({
+      ...item,
+      timestamp: new Date(item.timestamp),
+    })),
+  };
 }
 
 export async function createPriceHistory(
@@ -42,5 +49,9 @@ export async function createPriceHistory(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to create price history');
   }
-  return response.json() as unknown as Promise<PriceHistory>;
+  const result = await response.json();
+  return {
+    ...result,
+    timestamp: new Date(result.timestamp),
+  };
 }

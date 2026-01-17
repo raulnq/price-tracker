@@ -29,9 +29,11 @@ export function ProductForm() {
 
   const preselectedStoreId = searchParams.get('storeId') ?? '';
 
-  const { data: product, isLoading: productLoading } = useProduct(
-    productId ?? ''
-  );
+  const {
+    data: product,
+    isLoading: productLoading,
+    isError: productError,
+  } = useProduct(productId ?? '');
   const { data: storesData, isLoading: storesLoading } = useStores({
     pageSize: 100,
     pageNumber: 1,
@@ -95,23 +97,36 @@ export function ProductForm() {
     const url = urlRef.current?.value ?? '';
     const currency = currencyRef.current?.value?.toUpperCase() ?? '';
 
-    if (isEdit) {
-      await updateMutation.mutateAsync({ name, url, currency });
-      navigate(`/products/${productId}`);
-    } else {
-      const result = await createMutation.mutateAsync({
-        name,
-        url,
-        currency,
-        storeId,
-      });
-      navigate(`/products/${result.productId}`);
+    try {
+      if (isEdit) {
+        await updateMutation.mutateAsync({ name, url, currency });
+        navigate(`/products/${productId}`);
+      } else {
+        const result = await createMutation.mutateAsync({
+          name,
+          url,
+          currency,
+          storeId,
+        });
+        navigate(`/products/${result.productId}`);
+      }
+    } catch (error) {
+      console.error('Failed to save product:', error);
     }
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
+  const mutationError = createMutation.error || updateMutation.error;
 
-  if ((isEdit && (productLoading || !product)) || storesLoading) {
+  if (isEdit && productError) {
+    return (
+      <div className="text-center py-8 text-destructive">
+        Failed to load product. Please try again.
+      </div>
+    );
+  }
+
+  if ((isEdit && productLoading) || storesLoading) {
     return (
       <div className="text-center py-8 text-muted-foreground">Loading...</div>
     );
@@ -144,6 +159,13 @@ export function ProductForm() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {mutationError && (
+              <div className="text-sm text-destructive">
+                {mutationError instanceof Error
+                  ? mutationError.message
+                  : 'Failed to save product'}
+              </div>
+            )}
             {!isEdit && (
               <div className="space-y-2">
                 <Label htmlFor="store">Store</Label>

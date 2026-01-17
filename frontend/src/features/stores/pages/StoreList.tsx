@@ -21,6 +21,14 @@ import {
 import { Pagination } from '@/components/Pagination';
 import { useStores } from '../useStores';
 
+function getHostname(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+}
+
 export function StoreList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryPage = searchParams.get('page') ?? 1;
@@ -95,6 +103,7 @@ export function StoreList() {
               <Input
                 ref={searchInputRef}
                 placeholder="Search stores..."
+                defaultValue={search}
                 className="pl-8"
               />
             </div>
@@ -150,7 +159,7 @@ export function StoreList() {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
                         >
-                          {new URL(store.url).hostname}
+                          {getHostname(store.url)}
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       </TableCell>

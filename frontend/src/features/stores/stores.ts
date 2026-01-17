@@ -23,7 +23,7 @@ export async function listStores(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to fetch stores');
   }
-  return response.json() as Promise<Page<Store>>;
+  return response.json();
 }
 
 export async function getStore(
@@ -38,7 +38,7 @@ export async function getStore(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to fetch store');
   }
-  return response.json() as Promise<Store>;
+  return response.json();
 }
 
 export async function addStore(
@@ -53,7 +53,7 @@ export async function addStore(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to add store');
   }
-  return response.json() as Promise<Store>;
+  return response.json();
 }
 
 export async function editStore(
@@ -72,5 +72,5 @@ export async function editStore(
     const error = await response.json();
     throw new Error(error.detail || 'Failed to update store');
   }
-  return response.json() as Promise<Store>;
+  return response.json();
 }

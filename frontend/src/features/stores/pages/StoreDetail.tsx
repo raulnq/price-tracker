@@ -38,7 +38,11 @@ export function StoreDetail() {
     isLoading: storeLoading,
     error: storeError,
   } = useStore(storeId!);
-  const { data: productsData, isLoading: productsLoading } = useProducts({
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    error: productsError,
+  } = useProducts({
     storeId,
     pageNumber: page,
     pageSize: 10,
@@ -113,6 +117,10 @@ export function StoreDetail() {
           {productsLoading ? (
             <div className="text-center py-8 text-muted-foreground">
               Loading products...
+            </div>
+          ) : productsError ? (
+            <div className="text-center py-8 text-destructive">
+              Failed to load products. Please try again.
             </div>
           ) : productsData?.items.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">

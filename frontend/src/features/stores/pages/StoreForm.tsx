@@ -18,7 +18,11 @@ export function StoreForm() {
   const navigate = useNavigate();
   const isEdit = !!storeId;
 
-  const { data: store, isLoading: storeLoading } = useStore(storeId ?? '');
+  const {
+    data: store,
+    isLoading: storeLoading,
+    isError: storeError,
+  } = useStore(storeId ?? '');
   const addMutation = useAddStore();
   const editMutation = useEditStore(storeId ?? '');
   const nameRef = useRef<HTMLInputElement>(null);
@@ -74,7 +78,15 @@ export function StoreForm() {
   const isPending = addMutation.isPending || editMutation.isPending;
   const mutationError = addMutation.error || editMutation.error;
 
-  if (isEdit && (storeLoading || !store)) {
+  if (isEdit && storeError) {
+    return (
+      <div className="text-center py-8 text-destructive">
+        Failed to load store. Please try again.
+      </div>
+    );
+  }
+
+  if (isEdit && storeLoading) {
     return (
       <div className="text-center py-8 text-muted-foreground">Loading...</div>
     );
