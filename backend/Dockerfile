@@ -27,7 +27,7 @@ RUN groupadd -g 1001 nodejs && useradd -u 1001 -g nodejs -m nodejs
 # Copy and build application
 COPY package*.json tsconfig.json drizzle.config.ts ./
 COPY src ./src
-RUN npm ci --ignore-scripts && npm run build && npm prune --omit=dev && npm cache clean --force
+RUN npm install --ignore-scripts && npm run build && npm prune --omit=dev && npm cache clean --force
 RUN chown -R nodejs:nodejs /app
 
 # Switch to nodejs user and install Playwright browsers
