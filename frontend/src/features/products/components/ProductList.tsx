@@ -33,7 +33,7 @@ import { PriceChangeIndicator } from './PriceChangeIndicator';
 export function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryPage = searchParams.get('page') ?? 1;
-  const page = isNaN(Number(queryPage)) ? 1 : Number(queryPage);
+  const page = Math.max(1, Math.floor(Number(queryPage)) || 1);
   const search = searchParams.get('search') || '';
   const storeFilter = searchParams.get('storeId') || '';
   const searchInputRef = useRef<HTMLInputElement>(null);

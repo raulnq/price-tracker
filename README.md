@@ -53,6 +53,7 @@ CORS_ORIGIN=http://localhost:5173
 
 # Authentication
 CLERK_SECRET_KEY=your-clerk-secret-key
+CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
 
 # Logging
 LOG_LEVEL=info
@@ -108,7 +109,7 @@ npm run dev:scheduler
 
 ## Project Structure
 
-```
+```text
 price-tracker/
 ├── backend/
 │   ├── src/
@@ -202,22 +203,23 @@ price-tracker/
 
 ### Backend
 
-| Variable               | Required | Default                 | Description                                    |
-| ---------------------- | -------- | ----------------------- | ---------------------------------------------- |
-| `NODE_ENV`             | No       | `development`           | Environment mode                               |
-| `PORT`                 | No       | `3000`                  | Server port                                    |
-| `DATABASE_URL`         | Yes      | -                       | PostgreSQL connection string                   |
-| `CORS_ORIGIN`          | No       | `http://localhost:5173` | CORS origin for frontend                       |
-| `CLERK_SECRET_KEY`     | No       | -                       | Clerk secret key for authentication            |
-| `LOG_LEVEL`            | No       | `info`                  | Log level (trace/debug/info/warn/error/fatal)  |
-| `SEQ_URL`              | No       | -                       | Seq server URL for centralized logging         |
-| `GEMINI_API_KEY`       | No       | -                       | Google Gemini API key (required for scraping)  |
-| `GEMINI_MODEL`         | No       | `gemini-2.5-flash`      | Gemini model to use                            |
-| `CRON_EXPRESSION`      | No       | `0 */12 * * *`          | Scraper schedule (cron format)                 |
-| `MAILTRAP_API_TOKEN`   | No       | -                       | Mailtrap API token (required for email alerts) |
-| `ALERT_EMAIL_TO`       | No       | -                       | Email address to receive price drop alerts     |
-| `ALERT_EMAIL_FROM`     | No       | -                       | Sender email address (must be verified domain) |
-| `PRICE_DROP_THRESHOLD` | No       | `0`                     | Minimum price drop % to trigger alert          |
+| Variable                | Required | Default                 | Description                                    |
+| ----------------------- | -------- | ----------------------- | ---------------------------------------------- |
+| `NODE_ENV`              | No       | `development`           | Environment mode                               |
+| `PORT`                  | No       | `3000`                  | Server port                                    |
+| `DATABASE_URL`          | Yes      | -                       | PostgreSQL connection string                   |
+| `CORS_ORIGIN`           | No       | `http://localhost:5173` | CORS origin for frontend                       |
+| `CLERK_SECRET_KEY`      | No       | -                       | Clerk secret key for authentication            |
+| `CLERK_PUBLISHABLE_KEY` | No       | -                       | Clerk publishable key                          |
+| `LOG_LEVEL`             | No       | `info`                  | Log level (trace/debug/info/warn/error/fatal)  |
+| `SEQ_URL`               | No       | -                       | Seq server URL for centralized logging         |
+| `GEMINI_API_KEY`        | No       | -                       | Google Gemini API key (required for scraping)  |
+| `GEMINI_MODEL`          | No       | `gemini-2.5-flash`      | Gemini model to use                            |
+| `CRON_EXPRESSION`       | No       | `0 */12 * * *`          | Scraper schedule (cron format)                 |
+| `MAILTRAP_API_TOKEN`    | No       | -                       | Mailtrap API token (required for email alerts) |
+| `ALERT_EMAIL_TO`        | No       | -                       | Email address to receive price drop alerts     |
+| `ALERT_EMAIL_FROM`      | No       | -                       | Sender email address (must be verified domain) |
+| `PRICE_DROP_THRESHOLD`  | No       | `0`                     | Minimum price drop % to trigger alert          |
 
 ### Frontend
 

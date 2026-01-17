@@ -31,8 +31,8 @@ function getHostname(url: string): string {
 
 export function StoreList() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const queryPage = searchParams.get('page') ?? 1;
-  const page = isNaN(Number(queryPage)) ? 1 : Number(queryPage);
+  const queryPage = searchParams.get('page') ?? '1';
+  const page = Math.max(1, Math.floor(Number(queryPage)) || 1);
   const search = searchParams.get('search') ?? '';
   const searchInputRef = useRef<HTMLInputElement>(null);
 
