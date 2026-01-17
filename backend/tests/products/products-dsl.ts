@@ -1,21 +1,21 @@
 import { testClient } from 'hono/testing';
-import { productRoute } from '@/features/products/index.js';
+import { app } from '#/app.js';
 import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
 import {
   type Product,
   type PriceHistory,
-} from '@/features/products/product.js';
+} from '#/features/products/product.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { parseDatesFromJSON } from '../utils.js';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { AddProduct } from '@/features/products/add-product.js';
-import type { EditProduct } from '@/features/products/edit-product.js';
-import type { ListProducts } from '@/features/products/list-products.js';
-import type { Page } from '@/types/pagination.js';
-import type { AddPriceHistory } from '@/features/products/add-price-history.js';
-import type { ListPriceHistories } from '@/features/products/list-price-histories.js';
+import type { AddProduct } from '#/features/products/add-product.js';
+import type { EditProduct } from '#/features/products/edit-product.js';
+import type { ListProducts } from '#/features/products/list-products.js';
+import type { Page } from '#/types/pagination.js';
+import type { AddPriceHistory } from '#/features/products/add-price-history.js';
+import type { ListPriceHistories } from '#/features/products/list-price-histories.js';
 
 export const laptop = (
   storeId: string,
@@ -62,8 +62,8 @@ export async function addProduct(
   input: AddProduct,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Product | ProblemDocument> {
-  const client = testClient(productRoute);
-  const response = await client.products.$post({
+  const client = testClient(app);
+  const response = await client.api.products.$post({
     json: input,
   });
 
@@ -99,8 +99,8 @@ export async function editProduct(
   input: EditProduct,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Product | ProblemDocument> {
-  const client = testClient(productRoute);
-  const response = await client.products[':productId'].$put({
+  const client = testClient(app);
+  const response = await client.api.products[':productId'].$put({
     param: { productId },
     json: input,
   });
@@ -132,8 +132,8 @@ export async function getProduct(
   productId: string,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Product | ProblemDocument> {
-  const client = testClient(productRoute);
-  const response = await client.products[':productId'].$get({
+  const client = testClient(app);
+  const response = await client.api.products[':productId'].$get({
     param: { productId },
   });
 
@@ -166,14 +166,14 @@ export async function listProducts(
   params: ListProducts,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Page<Product> | ProblemDocument> {
-  const client = testClient(productRoute);
+  const client = testClient(app);
   const queryParams = {
     pageNumber: params.pageNumber?.toString(),
     pageSize: params.pageSize?.toString(),
     name: params.name,
     storeId: params.storeId,
   };
-  const response = await client.products.$get({
+  const response = await client.api.products.$get({
     query: queryParams,
   });
 
@@ -214,8 +214,8 @@ export async function addPriceHistory(
   input: AddPriceHistory,
   expectedProblemDocument?: ProblemDocument
 ): Promise<PriceHistory | ProblemDocument> {
-  const client = testClient(productRoute);
-  const response = await client.products[':productId'].prices.$post({
+  const client = testClient(app);
+  const response = await client.api.products[':productId'].prices.$post({
     param: { productId },
     json: input,
   });
@@ -252,12 +252,12 @@ export async function listPriceHistories(
   params: ListPriceHistories,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Page<PriceHistory> | ProblemDocument> {
-  const client = testClient(productRoute);
+  const client = testClient(app);
   const queryParams = {
     pageNumber: params.pageNumber?.toString(),
     pageSize: params.pageSize?.toString(),
   };
-  const response = await client.products[':productId'].prices.$get({
+  const response = await client.api.products[':productId'].prices.$get({
     param: { productId },
     query: queryParams,
   });

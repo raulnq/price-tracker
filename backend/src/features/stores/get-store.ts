@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 import { stores, storeSchema } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { zValidator } from '@/utils/validation.js';
-import { createResourceNotFoundPD } from '@/utils/problem-document.js';
-import { client } from '@/database/client.js';
+import { zValidator } from '#/utils/validation.js';
+import { createResourceNotFoundPD } from '#/utils/problem-document.js';
+import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
 
 const schema = storeSchema.pick({ storeId: true });

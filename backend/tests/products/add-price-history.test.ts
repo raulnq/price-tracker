@@ -10,7 +10,7 @@ import {
 } from './products-dsl.js';
 import { addStore, wallmart } from '../stores/stores-dsl.js';
 import { createValidationError, validationError } from '../errors.js';
-import type { AddPriceHistory } from '@/features/products/add-price-history.js';
+import type { AddPriceHistory } from '#/features/products/add-price-history.js';
 
 describe('Add Price History Endpoint', async () => {
   const store = await addStore(wallmart());

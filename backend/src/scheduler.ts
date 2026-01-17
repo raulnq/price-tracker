@@ -1,5 +1,5 @@
-import { ENV } from '@/env.js';
-import { logger } from '@/utils/logger.js';
+import { ENV } from '#/env.js';
+import { logger } from '#/utils/logger.js';
 import cron from 'node-cron';
 import { scrapeProducts } from './features/scraper/scraper.js';
 import {

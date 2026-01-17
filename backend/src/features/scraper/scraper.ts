@@ -1,9 +1,9 @@
 import { chromium, type Browser } from 'playwright';
-import { client } from '@/database/client.js';
-import { products, type Product } from '@/features/products/product.js';
+import { client } from '#/database/client.js';
+import { products, type Product } from '#/features/products/product.js';
 import { extractPrice, type ExtractedPrice } from './extractor.js';
-import { logger } from '@/utils/logger.js';
-import { addPriceHistory } from '@/features/products/add-price-history.js';
+import { logger } from '#/utils/logger.js';
+import { addPriceHistory } from '#/features/products/add-price-history.js';
 
 export type ScrapeResult = ExtractedPrice & {
   productId: string;

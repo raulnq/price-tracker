@@ -1,15 +1,15 @@
 import { testClient } from 'hono/testing';
-import { type AddStore } from '@/features/stores/add-store.js';
-import { storeRoute } from '@/features/stores/index.js';
+import { type AddStore } from '#/features/stores/add-store.js';
+import { app } from '#/app.js';
 import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
-import { type Store } from '@/features/stores/store.js';
+import { type Store } from '#/features/stores/store.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { EditStore } from '@/features/stores/edit-store.js';
-import type { ListStores } from '@/features/stores/list-stores.js';
-import type { Page } from '@/types/pagination.js';
+import type { EditStore } from '#/features/stores/edit-store.js';
+import type { ListStores } from '#/features/stores/list-stores.js';
+import type { Page } from '#/types/pagination.js';
 
 export const wallmart = (overrides?: Partial<AddStore>): AddStore => {
   return {
@@ -37,8 +37,8 @@ export async function addStore(
   input: AddStore,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Store | ProblemDocument> {
-  const client = testClient(storeRoute);
-  const response = await client.stores.$post({
+  const client = testClient(app);
+  const response = await client.api.stores.$post({
     json: input,
   });
 
@@ -76,8 +76,8 @@ export async function editStore(
   input: EditStore,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Store | ProblemDocument> {
-  const client = testClient(storeRoute);
-  const response = await client.stores[':storeId'].$put({
+  const client = testClient(app);
+  const response = await client.api.stores[':storeId'].$put({
     param: { storeId },
     json: input,
   });
@@ -109,8 +109,8 @@ export async function getStore(
   storeId: string,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Store | ProblemDocument> {
-  const client = testClient(storeRoute);
-  const response = await client.stores[':storeId'].$get({
+  const client = testClient(app);
+  const response = await client.api.stores[':storeId'].$get({
     param: { storeId },
   });
 
@@ -141,13 +141,13 @@ export async function listStores(
   params: ListStores,
   expectedProblemDocument?: ProblemDocument
 ): Promise<Page<Store> | ProblemDocument> {
-  const client = testClient(storeRoute);
+  const client = testClient(app);
   const queryParams = {
     pageNumber: params.pageNumber?.toString(),
     pageSize: params.pageSize?.toString(),
     name: params.name,
   };
-  const response = await client.stores.$get({
+  const response = await client.api.stores.$get({
     query: queryParams,
   });
 

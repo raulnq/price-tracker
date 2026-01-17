@@ -2,10 +2,10 @@ import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { products, productSchema } from './product.js';
-import { zValidator } from '@/utils/validation.js';
-import { stores } from '@/features/stores/store.js';
-import { createResourceNotFoundPD } from '@/utils/problem-document.js';
-import { client } from '@/database/client.js';
+import { zValidator } from '#/utils/validation.js';
+import { stores } from '#/features/stores/store.js';
+import { createResourceNotFoundPD } from '#/utils/problem-document.js';
+import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 

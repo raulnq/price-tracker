@@ -6,7 +6,7 @@ import {
   nike,
   assertStore,
 } from './stores-dsl.js';
-import { type Store } from '@/features/stores/store.js';
+import { type Store } from '#/features/stores/store.js';
 import {
   emptyText,
   bigText,
@@ -14,7 +14,7 @@ import {
   validationError,
   createNotFoundError,
 } from '../errors.js';
-import type { EditStore } from '@/features/stores/edit-store.js';
+import type { EditStore } from '#/features/stores/edit-store.js';
 
 describe('Edit Store Endpoint', () => {
   test('should edit an existing store with valid data', async () => {

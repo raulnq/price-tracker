@@ -20,6 +20,9 @@ const ENVSchema = z.object({
   ALERT_EMAIL_TO: z.string().optional().default('raulnq@gmail.com'),
   ALERT_EMAIL_FROM: z.string().optional().default('alerts@raulnq.win'),
   PRICE_DROP_THRESHOLD: z.coerce.number().optional().default(0),
+  CORS_ORIGIN: z.string().optional().default('http://localhost:5173'),
+  CLERK_SECRET_KEY: z.string().optional(),
+  CLERK_PUBLISHABLE_KEY: z.string().optional(),
 });
 
 expand(config());
