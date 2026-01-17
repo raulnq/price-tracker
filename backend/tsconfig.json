@@ -20,6 +20,7 @@
     "outDir": "./dist",
     "noErrorTruncation": true,
     "noPropertyAccessFromIndexSignature": true,
+    "baseUrl": ".",
     "paths": {
       "#/*": ["./src/*"]
     }
