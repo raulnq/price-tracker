@@ -202,29 +202,29 @@ price-tracker/
 
 ### Backend
 
-| Variable               | Required | Default            | Description                                    |
-| ---------------------- | -------- | ------------------ | ---------------------------------------------- |
-| `NODE_ENV`             | No       | `development`      | Environment mode                               |
-| `PORT`                 | No       | `3000`             | Server port                                    |
-| `DATABASE_URL`         | Yes      | -                  | PostgreSQL connection string                   |
-| `CORS_ORIGIN`          | No       | `http://localhost:5173` | CORS origin for frontend                  |
-| `CLERK_SECRET_KEY`     | No       | -                  | Clerk secret key for authentication            |
-| `LOG_LEVEL`            | No       | `info`             | Log level (trace/debug/info/warn/error/fatal)  |
-| `SEQ_URL`              | No       | -                  | Seq server URL for centralized logging         |
-| `GEMINI_API_KEY`       | No       | -                  | Google Gemini API key (required for scraping)  |
-| `GEMINI_MODEL`         | No       | `gemini-2.5-flash` | Gemini model to use                            |
-| `CRON_EXPRESSION`      | No       | `0 */12 * * *`     | Scraper schedule (cron format)                 |
-| `MAILTRAP_API_TOKEN`   | No       | -                  | Mailtrap API token (required for email alerts) |
-| `ALERT_EMAIL_TO`       | No       | -                  | Email address to receive price drop alerts     |
-| `ALERT_EMAIL_FROM`     | No       | -                  | Sender email address (must be verified domain) |
-| `PRICE_DROP_THRESHOLD` | No       | `0`                | Minimum price drop % to trigger alert          |
+| Variable               | Required | Default                 | Description                                    |
+| ---------------------- | -------- | ----------------------- | ---------------------------------------------- |
+| `NODE_ENV`             | No       | `development`           | Environment mode                               |
+| `PORT`                 | No       | `3000`                  | Server port                                    |
+| `DATABASE_URL`         | Yes      | -                       | PostgreSQL connection string                   |
+| `CORS_ORIGIN`          | No       | `http://localhost:5173` | CORS origin for frontend                       |
+| `CLERK_SECRET_KEY`     | No       | -                       | Clerk secret key for authentication            |
+| `LOG_LEVEL`            | No       | `info`                  | Log level (trace/debug/info/warn/error/fatal)  |
+| `SEQ_URL`              | No       | -                       | Seq server URL for centralized logging         |
+| `GEMINI_API_KEY`       | No       | -                       | Google Gemini API key (required for scraping)  |
+| `GEMINI_MODEL`         | No       | `gemini-2.5-flash`      | Gemini model to use                            |
+| `CRON_EXPRESSION`      | No       | `0 */12 * * *`          | Scraper schedule (cron format)                 |
+| `MAILTRAP_API_TOKEN`   | No       | -                       | Mailtrap API token (required for email alerts) |
+| `ALERT_EMAIL_TO`       | No       | -                       | Email address to receive price drop alerts     |
+| `ALERT_EMAIL_FROM`     | No       | -                       | Sender email address (must be verified domain) |
+| `PRICE_DROP_THRESHOLD` | No       | `0`                     | Minimum price drop % to trigger alert          |
 
 ### Frontend
 
-| Variable                     | Required | Default                 | Description              |
-| ---------------------------- | -------- | ----------------------- | ------------------------ |
-| `VITE_API_BASE_URL`          | No       | `http://localhost:5000` | Backend API URL          |
-| `VITE_CLERK_PUBLISHABLE_KEY` | No       | -                       | Clerk publishable key    |
+| Variable                     | Required | Default                 | Description           |
+| ---------------------------- | -------- | ----------------------- | --------------------- |
+| `VITE_API_BASE_URL`          | No       | `http://localhost:5000` | Backend API URL       |
+| `VITE_CLERK_PUBLISHABLE_KEY` | No       | -                       | Clerk publishable key |
 
 ## Price Scraper
 
@@ -336,6 +336,7 @@ Tests use Node.js built-in test runner with a test database.
 ## Tech Stack
 
 ### Backend
+
 - [Hono](https://hono.dev/) - Web framework
 - [Drizzle ORM](https://orm.drizzle.team/) - Database ORM
 - [PostgreSQL](https://www.postgresql.org/) - Database
@@ -345,6 +346,7 @@ Tests use Node.js built-in test runner with a test database.
 - [Clerk](https://clerk.com/) - Authentication
 
 ### Frontend
+
 - [React](https://react.dev/) - UI library
 - [React Router](https://reactrouter.com/) - Routing
 - [TanStack Query](https://tanstack.com/query) - Server state management
