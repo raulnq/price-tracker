@@ -36,10 +36,10 @@ RUN npx playwright install chromium
 
 FROM base AS api
 EXPOSE 3000
-CMD ["node", "/app/dist/index.js"]
+CMD ["node", "/app/dist/src/index.js"]
 
 FROM base AS migrator
 CMD ["sh", "-c", "npm run database:migrate"]
 
 FROM base AS scheduler
-CMD ["node", "/app/dist/scheduler.js"]
+CMD ["node", "/app/dist/src/scheduler.js"]
