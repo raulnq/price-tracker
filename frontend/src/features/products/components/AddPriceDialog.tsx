@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -23,15 +23,16 @@ export function AddPriceDialog({
   open,
   onOpenChange,
 }: AddPriceDialogProps) {
-  const priceRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useCreatePriceHistory(productId);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const priceValue = parseFloat(priceRef.current?.value || '');
+    const formData = new FormData(e.currentTarget);
+    const priceValue = parseFloat(formData.get('price') as string);
+
     if (isNaN(priceValue) || priceValue <= 0) {
       setError('Please enter a valid positive price');
       return;
@@ -39,7 +40,7 @@ export function AddPriceDialog({
 
     try {
       await createMutation.mutateAsync({ price: priceValue });
-      if (priceRef.current) priceRef.current.value = '';
+      e.currentTarget.reset();
       setError(null);
       onOpenChange(false);
     } catch (err) {
@@ -50,7 +51,6 @@ export function AddPriceDialog({
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      if (priceRef.current) priceRef.current.value = '';
       setError(null);
     }
     onOpenChange(open);
@@ -71,10 +71,10 @@ export function AddPriceDialog({
               <Label htmlFor="price">Price</Label>
               <Input
                 id="price"
+                name="price"
                 type="number"
                 step="0.01"
                 min="0.01"
-                ref={priceRef}
                 placeholder="0.00"
                 disabled={createMutation.isPending}
               />

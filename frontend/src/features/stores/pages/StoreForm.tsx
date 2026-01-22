@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,13 +25,11 @@ export function StoreForm() {
   } = useStore(storeId ?? '');
   const addMutation = useAddStore();
   const editMutation = useEditStore(storeId ?? '');
-  const nameRef = useRef<HTMLInputElement>(null);
-  const urlRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<{ name?: string; url?: string }>({});
 
-  const validate = () => {
-    const name = nameRef.current?.value ?? '';
-    const url = urlRef.current?.value ?? '';
+  const validate = (formData: FormData) => {
+    const name = (formData.get('name') as string) ?? '';
+    const url = (formData.get('url') as string) ?? '';
     const newErrors: { name?: string; url?: string } = {};
 
     if (!name.trim()) {
@@ -54,13 +52,14 @@ export function StoreForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    if (!validate(formData)) return;
 
-    const name = nameRef.current?.value ?? '';
-    const url = urlRef.current?.value ?? '';
+    const name = formData.get('name') as string;
+    const url = formData.get('url') as string;
 
     try {
       if (isEdit) {
@@ -128,7 +127,7 @@ export function StoreForm() {
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                ref={nameRef}
+                name="name"
                 defaultValue={store?.name ?? ''}
                 placeholder="Store name"
                 disabled={isPending}
@@ -142,8 +141,8 @@ export function StoreForm() {
               <Label htmlFor="url">URL</Label>
               <Input
                 id="url"
-                ref={urlRef}
                 type="url"
+                name="url"
                 defaultValue={store?.url ?? ''}
                 placeholder="https://example.com"
                 disabled={isPending}

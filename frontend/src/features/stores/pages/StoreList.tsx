@@ -1,8 +1,6 @@
-import { useRef } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { Plus, Search, ExternalLink, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -20,6 +18,7 @@ import {
 } from '@/components/ui/table';
 import { Pagination } from '@/components/Pagination';
 import { useStores } from '../useStores';
+import { StoreSearch } from '../components/StoreSearch';
 
 function getHostname(url: string): string {
   try {
@@ -30,50 +29,9 @@ function getHostname(url: string): string {
 }
 
 export function StoreList() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const queryPage = searchParams.get('page') ?? '1';
-  const page = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const [searchParams] = useSearchParams();
   const search = searchParams.get('search') ?? '';
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const { data, isLoading, error } = useStores({
-    pageNumber: page,
-    pageSize: 10,
-    name: search || undefined,
-  });
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchParams(prev => {
-      const value = searchInputRef.current?.value ?? '';
-      if (value) {
-        prev.set('search', value);
-      } else {
-        prev.delete('search');
-      }
-      prev.set('page', '1');
-      return prev;
-    });
-  };
-
-  const handleClear = () => {
-    if (searchInputRef.current) {
-      searchInputRef.current.value = '';
-    }
-    setSearchParams(prev => {
-      prev.delete('search');
-      prev.set('page', '1');
-      return prev;
-    });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(prev => {
-      prev.set('page', newPage.toString());
-      return prev;
-    });
-  };
-
+  const { data, isLoading, error } = useStores({ name: search });
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -97,26 +55,7 @@ export function StoreList() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="flex gap-2 mb-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                ref={searchInputRef}
-                placeholder="Search stores..."
-                defaultValue={search}
-                className="pl-8"
-              />
-            </div>
-            <Button type="submit" variant="secondary">
-              Search
-            </Button>
-            {search && (
-              <Button type="button" variant="ghost" onClick={handleClear}>
-                Clear
-              </Button>
-            )}
-          </form>
-
+          <StoreSearch />
           {isLoading ? (
             <div className="text-center py-8 text-muted-foreground">
               Loading...
@@ -127,9 +66,7 @@ export function StoreList() {
             </div>
           ) : data?.items.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              {search
-                ? 'No stores found matching your search.'
-                : 'No stores yet. Add your first store!'}
+              No stores found matching your search.
             </div>
           ) : (
             <>
@@ -184,11 +121,7 @@ export function StoreList() {
 
               {data && (
                 <div className="mt-4">
-                  <Pagination
-                    currentPage={data.pageNumber}
-                    totalPages={data.totalPages}
-                    onPageChange={handlePageChange}
-                  />
+                  <Pagination totalPages={data.totalPages} />
                 </div>
               )}
             </>

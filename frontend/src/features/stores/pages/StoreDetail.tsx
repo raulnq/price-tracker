@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { ArrowLeft, ExternalLink, Pencil, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,16 +23,6 @@ import { PriceChangeIndicator } from '@/features/products/components/PriceChange
 
 export function StoreDetail() {
   const { storeId } = useParams<{ storeId: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(prev => {
-      prev.set('page', newPage.toString());
-      return prev;
-    });
-  };
-
   const {
     data: store,
     isLoading: storeLoading,
@@ -44,8 +34,6 @@ export function StoreDetail() {
     error: productsError,
   } = useProducts({
     storeId,
-    pageNumber: page,
-    pageSize: 10,
   });
 
   if (storeLoading) {
@@ -185,11 +173,7 @@ export function StoreDetail() {
 
               {productsData && (
                 <div className="mt-4">
-                  <Pagination
-                    currentPage={productsData.pageNumber}
-                    totalPages={productsData.totalPages}
-                    onPageChange={handlePageChange}
-                  />
+                  <Pagination totalPages={productsData.totalPages} />
                 </div>
               )}
             </>

@@ -8,10 +8,25 @@ import {
 } from './products';
 import type { AddProduct } from '@price-tracker/backend/features/products/add-product';
 import type { EditProduct } from '@price-tracker/backend/features/products/edit-product';
+import { useSearchParams } from 'react-router';
 import type { ListProducts } from '@price-tracker/backend/features/products/list-products';
 
-export function useProducts(params?: ListProducts) {
+export function useProducts({
+  pageNumber,
+  pageSize,
+  storeId,
+  name,
+}: Partial<ListProducts> = {}) {
   const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: pageNumber ?? currentPage,
+    pageSize: pageSize ?? 10,
+    name: name || undefined,
+    storeId: storeId || undefined,
+  };
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {

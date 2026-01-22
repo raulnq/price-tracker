@@ -38,10 +38,6 @@ export function Dashboard() {
       p => p.priceChangePercentage !== null && p.priceChangePercentage > 0
     ).length ?? 0;
 
-  const storeMap = new Map(
-    storesData?.items.map(s => [s.storeId, s.name]) ?? []
-  );
-
   return (
     <div className="space-y-6">
       <div>
@@ -153,7 +149,7 @@ export function Dashboard() {
                         {product.name}
                       </Link>
                       <p className="text-sm text-muted-foreground">
-                        {storeMap.get(product.storeId) ?? 'Unknown store'}
+                        {product.storeName}
                       </p>
                     </div>
                     <div className="text-right">

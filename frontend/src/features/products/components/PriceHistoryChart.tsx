@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { usePriceHistory } from '../usePriceHistory';
 import {
   LineChart,
@@ -23,6 +24,21 @@ export function PriceHistoryChart({
     pageNumber: 1,
   });
 
+  const chartData = useMemo(() => {
+    const items = data?.items;
+    if (!items?.length) return [];
+    return items
+      .map(item => {
+        const date = new Date(item.timestamp);
+        return {
+          date: date.toLocaleDateString(),
+          price: item.price,
+          timestamp: date.getTime(),
+        };
+      })
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }, [data]);
+
   if (isLoading) {
     return (
       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -39,21 +55,13 @@ export function PriceHistoryChart({
     );
   }
 
-  if (!data?.items.length) {
+  if (!chartData.length) {
     return (
       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
         No price history data available
       </div>
     );
   }
-
-  const chartData = data.items
-    .map(item => ({
-      date: new Date(item.timestamp).toLocaleDateString(),
-      price: item.price,
-      timestamp: new Date(item.timestamp).getTime(),
-    }))
-    .sort((a, b) => a.timestamp - b.timestamp);
 
   return (
     <ResponsiveContainer width="100%" height={300}>

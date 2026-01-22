@@ -1,8 +1,6 @@
-import { useRef } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { Plus, Search, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -18,75 +16,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Pagination } from '@/components/Pagination';
 import { useProducts } from '../useProducts';
-import { useStores } from '@/features/stores/useStores';
 import { PriceChangeIndicator } from './PriceChangeIndicator';
+import { ProductSearch } from './ProductSearch';
 
 export function ProductList() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const queryPage = searchParams.get('page') ?? 1;
-  const page = Math.max(1, Math.floor(Number(queryPage)) || 1);
-  const search = searchParams.get('search') || '';
-  const storeFilter = searchParams.get('storeId') || '';
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const { data: storesData } = useStores({ pageSize: 100, pageNumber: 1 });
+  const [searchParams] = useSearchParams();
+  const storeId = searchParams.get('storeId') || '';
+  const search = searchParams.get('search') ?? '';
   const { data, isLoading, error } = useProducts({
-    pageNumber: page,
-    pageSize: 10,
+    storeId: storeId || undefined,
     name: search || undefined,
-    storeId: storeFilter || undefined,
   });
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const value = searchInputRef.current?.value || '';
-    setSearchParams(prev => {
-      if (value) {
-        prev.set('search', value);
-      } else {
-        prev.delete('search');
-      }
-      prev.delete('page');
-      return prev;
-    });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(prev => {
-      prev.set('page', newPage.toString());
-      return prev;
-    });
-  };
-
-  const handleStoreFilterChange = (value: string) => {
-    setSearchParams(prev => {
-      if (value && value !== 'all') {
-        prev.set('storeId', value);
-      } else {
-        prev.delete('storeId');
-      }
-      prev.delete('page');
-      return prev;
-    });
-  };
-
-  const handleClearFilters = () => {
-    setSearchParams({});
-    if (searchInputRef.current) searchInputRef.current.value = '';
-  };
-
-  const storeMap = new Map(
-    storesData?.items.map(s => [s.storeId, s.name]) ?? []
-  );
 
   return (
     <div className="space-y-6">
@@ -111,53 +53,7 @@ export function ProductList() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2 mb-4 flex-wrap">
-            <form
-              onSubmit={handleSearch}
-              className="flex gap-2 flex-1 min-w-[200px]"
-            >
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search products..."
-                  className="pl-8"
-                  ref={searchInputRef}
-                  defaultValue={search}
-                />
-              </div>
-              <Button type="submit" variant="secondary">
-                Search
-              </Button>
-            </form>
-
-            <Select
-              value={storeFilter || 'all'}
-              onValueChange={handleStoreFilterChange}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filter by store" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Stores</SelectItem>
-                {storesData?.items.map(store => (
-                  <SelectItem key={store.storeId} value={store.storeId}>
-                    {store.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {(search || storeFilter) && (
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={handleClearFilters}
-              >
-                Clear Filters
-              </Button>
-            )}
-          </div>
-
+          <ProductSearch />
           {isLoading ? (
             <div className="text-center py-8 text-muted-foreground">
               Loading...
@@ -168,9 +64,7 @@ export function ProductList() {
             </div>
           ) : data?.items.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              {search || storeFilter
-                ? 'No products found matching your filters.'
-                : 'No products yet. Add your first product!'}
+              No products found matching your filters.
             </div>
           ) : (
             <>
@@ -201,7 +95,7 @@ export function ProductList() {
                           to={`/stores/${product.storeId}`}
                           className="text-muted-foreground hover:text-foreground hover:underline"
                         >
-                          {storeMap.get(product.storeId) ?? 'Unknown'}
+                          {product.storeName}
                         </Link>
                       </TableCell>
                       <TableCell>
@@ -240,11 +134,7 @@ export function ProductList() {
 
               {data && (
                 <div className="mt-4">
-                  <Pagination
-                    currentPage={data.pageNumber}
-                    totalPages={data.totalPages}
-                    onPageChange={handlePageChange}
-                  />
+                  <Pagination totalPages={data.totalPages} />
                 </div>
               )}
             </>

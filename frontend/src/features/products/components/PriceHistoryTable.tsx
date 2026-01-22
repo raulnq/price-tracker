@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router';
 import {
   Table,
   TableBody,
@@ -19,20 +18,7 @@ export function PriceHistoryTable({
   productId,
   currency,
 }: PriceHistoryTableProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get('historyPage')) || 1;
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(prev => {
-      prev.set('historyPage', newPage.toString());
-      return prev;
-    });
-  };
-
-  const { data, isLoading, error } = usePriceHistory(productId, {
-    pageNumber: page,
-    pageSize: 10,
-  });
+  const { data, isLoading, error } = usePriceHistory(productId);
 
   if (isLoading) {
     return (
@@ -58,10 +44,6 @@ export function PriceHistoryTable({
     );
   }
 
-  const sortedItems = [...data.items].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-
   return (
     <>
       <Table>
@@ -73,7 +55,7 @@ export function PriceHistoryTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedItems.map(item => {
+          {data.items.map(item => {
             const date = new Date(item.timestamp);
             return (
               <TableRow key={item.priceHistoryId}>
@@ -92,11 +74,7 @@ export function PriceHistoryTable({
 
       {data && (
         <div className="mt-4">
-          <Pagination
-            currentPage={data.pageNumber}
-            totalPages={data.totalPages}
-            onPageChange={handlePageChange}
-          />
+          <Pagination totalPages={data.totalPages} />
         </div>
       )}
     </>

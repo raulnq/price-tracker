@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useProduct } from '../useProducts';
-import { useStore } from '@/features/stores/useStores';
 import { PriceChangeIndicator } from '../components/PriceChangeIndicator';
 import { PriceHistoryChart } from '../components/PriceHistoryChart';
 import { PriceHistoryTable } from '../components/PriceHistoryTable';
@@ -25,7 +24,6 @@ export function ProductDetail() {
     isLoading: productLoading,
     error: productError,
   } = useProduct(productId!);
-  const { data: store } = useStore(product?.storeId ?? '');
 
   if (productLoading) {
     return (
@@ -60,11 +58,9 @@ export function ProductDetail() {
         <div className="flex-1">
           <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
-            {store && (
-              <Link to={`/stores/${store.storeId}`} className="hover:underline">
-                {store.name}
-              </Link>
-            )}
+            <Link to={`/stores/${product.storeId}`} className="hover:underline">
+              {product.storeName}
+            </Link>
             <span>•</span>
             <a
               href={product.url}

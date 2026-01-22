@@ -7,6 +7,7 @@
     "frontend"
   ],
   "scripts": {
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
     "dev:backend": "npm run dev -w @price-tracker/backend",
     "dev:frontend": "npm run dev -w @price-tracker/frontend",
     "preview:frontend": "npm run preview -w @price-tracker/frontend",
@@ -28,6 +29,7 @@
     "test:backend": "npm run test -w @price-tracker/backend"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/prompt-cli": "^20.1.0",

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,15 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useProduct, useCreateProduct, useUpdateProduct } from '../useProducts';
-import { useStores } from '@/features/stores/useStores';
+import { StoreSelect } from '@/features/stores/components/StoreSelect';
 
 export function ProductForm() {
   const { productId } = useParams<{ productId: string }>();
@@ -34,16 +27,9 @@ export function ProductForm() {
     isLoading: productLoading,
     isError: productError,
   } = useProduct(productId ?? '');
-  const { data: storesData, isLoading: storesLoading } = useStores({
-    pageSize: 100,
-    pageNumber: 1,
-  });
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct(productId ?? '');
 
-  const nameRef = useRef<HTMLInputElement>(null);
-  const urlRef = useRef<HTMLInputElement>(null);
-  const currencyRef = useRef<HTMLInputElement>(null);
   const [storeId, setStoreId] = useState(preselectedStoreId);
   const [errors, setErrors] = useState<{
     name?: string;
@@ -52,10 +38,10 @@ export function ProductForm() {
     storeId?: string;
   }>({});
 
-  const validate = () => {
-    const name = nameRef.current?.value ?? '';
-    const url = urlRef.current?.value ?? '';
-    const currency = currencyRef.current?.value ?? '';
+  const validate = (formData: FormData) => {
+    const name = (formData.get('name') as string) ?? '';
+    const url = (formData.get('url') as string) ?? '';
+    const currency = (formData.get('currency') as string) ?? '';
     const newErrors: typeof errors = {};
 
     if (!name.trim()) {
@@ -88,14 +74,15 @@ export function ProductForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    const formData = new FormData(e.currentTarget);
+    if (!validate(formData)) return;
 
-    const name = nameRef.current?.value ?? '';
-    const url = urlRef.current?.value ?? '';
-    const currency = currencyRef.current?.value?.toUpperCase() ?? '';
+    const name = formData.get('name') as string;
+    const url = formData.get('url') as string;
+    const currency = (formData.get('currency') as string).toUpperCase();
 
     try {
       if (isEdit) {
@@ -126,7 +113,7 @@ export function ProductForm() {
     );
   }
 
-  if ((isEdit && productLoading) || storesLoading) {
+  if (isEdit && productLoading) {
     return (
       <div className="text-center py-8 text-muted-foreground">Loading...</div>
     );
@@ -167,35 +154,20 @@ export function ProductForm() {
               </div>
             )}
             {!isEdit && (
-              <div className="space-y-2">
-                <Label htmlFor="store">Store</Label>
-                <Select
-                  value={storeId}
-                  onValueChange={setStoreId}
-                  disabled={isPending}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a store" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {storesData?.items.map(store => (
-                      <SelectItem key={store.storeId} value={store.storeId}>
-                        {store.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.storeId && (
-                  <p className="text-sm text-destructive">{errors.storeId}</p>
-                )}
-              </div>
+              <StoreSelect
+                value={storeId}
+                onValueChange={setStoreId}
+                disabled={isPending}
+                label="Store"
+                error={errors.storeId}
+              />
             )}
 
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                ref={nameRef}
+                name="name"
                 defaultValue={product?.name ?? ''}
                 placeholder="Product name"
                 disabled={isPending}
@@ -209,7 +181,7 @@ export function ProductForm() {
               <Label htmlFor="url">URL</Label>
               <Input
                 id="url"
-                ref={urlRef}
+                name="url"
                 type="url"
                 defaultValue={product?.url ?? ''}
                 placeholder="https://example.com/product"
@@ -224,7 +196,7 @@ export function ProductForm() {
               <Label htmlFor="currency">Currency</Label>
               <Input
                 id="currency"
-                ref={currencyRef}
+                name="currency"
                 defaultValue={product?.currency ?? 'USD'}
                 placeholder="USD"
                 maxLength={3}

@@ -6,18 +6,24 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { useSearchParams } from 'react-router';
 
 interface PaginationProps {
-  currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
 }
 
-export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
+export function Pagination({ totalPages }: PaginationProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams(prev => {
+      prev.set('page', newPage.toString());
+      return prev;
+    });
+  };
+
   if (totalPages <= 1) return null;
 
   const pages: number[] = [];
@@ -39,7 +45,7 @@ export function Pagination({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             className={
               currentPage === 1
                 ? 'pointer-events-none opacity-50'
@@ -50,7 +56,7 @@ export function Pagination({
         {pages.map(page => (
           <PaginationItem key={page}>
             <PaginationLink
-              onClick={() => onPageChange(page)}
+              onClick={() => handlePageChange(page)}
               isActive={page === currentPage}
               className="cursor-pointer"
             >
@@ -60,7 +66,9 @@ export function Pagination({
         ))}
         <PaginationItem>
           <PaginationNext
-            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            onClick={() =>
+              handlePageChange(Math.min(totalPages, currentPage + 1))
+            }
             className={
               currentPage === totalPages
                 ? 'pointer-events-none opacity-50'
