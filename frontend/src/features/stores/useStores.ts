@@ -1,10 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { listStores, getStore, addStore, editStore } from './stores';
-import type { AddStore } from '@price-tracker/backend/features/stores/add-store';
-import type { EditStore } from '@price-tracker/backend/features/stores/edit-store';
 import { useAuth } from '@clerk/clerk-react';
 import { useSearchParams } from 'react-router';
-import type { ListStores } from '@price-tracker/backend/features/stores/list-stores';
+import type {
+  AddStore,
+  EditStore,
+  ListStores,
+} from '@price-tracker/backend/features/stores/schemas';
 
 export function useStores({
   pageNumber,
@@ -29,6 +36,40 @@ export function useStores({
   });
 }
 
+export function useStoresSuspense({
+  pageNumber,
+  pageSize,
+  name,
+}: Partial<ListStores> = {}) {
+  const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: pageNumber ?? currentPage,
+    pageSize: pageSize ?? 10,
+    name: name || undefined,
+  };
+  return useSuspenseQuery({
+    queryKey: ['stores', params],
+    queryFn: async () => {
+      const token = await getToken();
+      return listStores(params, token);
+    },
+  });
+}
+
+export function useStoreSuspense(storeId: string) {
+  const { getToken } = useAuth();
+  return useSuspenseQuery({
+    queryKey: ['store', storeId],
+    queryFn: async () => {
+      const token = await getToken();
+      return getStore(storeId, token);
+    },
+  });
+}
+
 export function useStoreOptions() {
   const { getToken } = useAuth();
   return useQuery({
@@ -49,7 +90,6 @@ export function useStore(storeId: string) {
       const token = await getToken();
       return getStore(storeId, token);
     },
-    enabled: !!storeId,
   });
 }
 

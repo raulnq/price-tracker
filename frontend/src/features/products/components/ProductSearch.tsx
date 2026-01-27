@@ -7,7 +7,7 @@ import { StoreSelect } from '@/features/stores/components/StoreSelect';
 
 export function ProductSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const search = searchParams.get('search') ?? '';
+  const name = searchParams.get('name') ?? '';
   const searchInputRef = useRef<HTMLInputElement>(null);
   const storeId = searchParams.get('storeId') || '';
   const handleSearch = (e: React.FormEvent) => {
@@ -15,9 +15,9 @@ export function ProductSearch() {
     const value = searchInputRef.current?.value || '';
     setSearchParams(prev => {
       if (value) {
-        prev.set('search', value);
+        prev.set('name', value);
       } else {
-        prev.delete('search');
+        prev.delete('name');
       }
       prev.set('page', '1');
       return prev;
@@ -50,7 +50,7 @@ export function ProductSearch() {
             placeholder="Search products..."
             className="pl-8"
             ref={searchInputRef}
-            defaultValue={search}
+            defaultValue={name}
           />
         </div>
         <Button type="submit" variant="secondary">
@@ -66,7 +66,7 @@ export function ProductSearch() {
         className="w-[200px]"
       />
 
-      {(search || storeId) && (
+      {(name || storeId) && (
         <Button variant="ghost" type="button" onClick={handleClearFilters}>
           Clear Filters
         </Button>

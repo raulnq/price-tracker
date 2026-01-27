@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-react';
 import {
   listProducts,
@@ -28,6 +33,29 @@ export function useProducts({
     storeId: storeId || undefined,
   };
   return useQuery({
+    queryKey: ['products', params],
+    queryFn: async () => {
+      const token = await getToken();
+      return listProducts(params, token);
+    },
+  });
+}
+
+export function useProductsSuspense({
+  storeId,
+  name,
+}: Partial<ListProducts> = {}) {
+  const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: currentPage,
+    pageSize: 10,
+    name: name || undefined,
+    storeId: storeId || undefined,
+  };
+  return useSuspenseQuery({
     queryKey: ['products', params],
     queryFn: async () => {
       const token = await getToken();

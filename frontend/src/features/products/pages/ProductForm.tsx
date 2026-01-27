@@ -159,7 +159,7 @@ export function ProductForm() {
                 onValueChange={setStoreId}
                 disabled={isPending}
                 label="Store"
-                error={errors.storeId}
+                errorMessage={errors.storeId}
               />
             )}
 

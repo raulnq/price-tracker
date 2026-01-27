@@ -15,7 +15,7 @@ interface StoreSelectProps {
   label?: string;
   placeholder?: string;
   showAllOption?: boolean;
-  error?: string;
+  errorMessage?: string;
   className?: string;
 }
 
@@ -26,10 +26,37 @@ export function StoreSelect({
   label,
   placeholder = 'Select a store',
   showAllOption = false,
-  error,
+  errorMessage,
   className,
 }: StoreSelectProps) {
-  const { data: storesData } = useStoreOptions();
+  const { data: storesData, isLoading, error } = useStoreOptions();
+
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        {label && <Label>{label}</Label>}
+        <Select disabled>
+          <SelectTrigger>
+            <SelectValue placeholder="Loading stores..." />
+          </SelectTrigger>
+        </Select>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        {label && <Label>{label}</Label>}
+        <Select disabled>
+          <SelectTrigger>
+            <SelectValue placeholder="Failed to load stores" />
+          </SelectTrigger>
+        </Select>
+        <p className="text-sm text-destructive">{error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
@@ -47,7 +74,9 @@ export function StoreSelect({
           ))}
         </SelectContent>
       </Select>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {errorMessage && (
+        <p className="text-sm text-destructive">{errorMessage}</p>
+      )}
     </div>
   );
 }

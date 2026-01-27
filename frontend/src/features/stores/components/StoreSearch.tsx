@@ -6,16 +6,16 @@ import { useSearchParams } from 'react-router';
 
 export function StoreSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const search = searchParams.get('search') ?? '';
+  const name = searchParams.get('name') ?? '';
   const searchInputRef = useRef<HTMLInputElement>(null);
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchParams(prev => {
       const value = searchInputRef.current?.value ?? '';
       if (value) {
-        prev.set('search', value);
+        prev.set('name', value);
       } else {
-        prev.delete('search');
+        prev.delete('name');
       }
       prev.set('page', '1');
       return prev;
@@ -27,7 +27,7 @@ export function StoreSearch() {
       searchInputRef.current.value = '';
     }
     setSearchParams(prev => {
-      prev.delete('search');
+      prev.delete('name');
       prev.set('page', '1');
       return prev;
     });
@@ -40,14 +40,14 @@ export function StoreSearch() {
         <Input
           ref={searchInputRef}
           placeholder="Search stores..."
-          defaultValue={search}
+          defaultValue={name}
           className="pl-8"
         />
       </div>
       <Button type="submit" variant="secondary">
         Search
       </Button>
-      {search && (
+      {name && (
         <Button type="button" variant="ghost" onClick={handleClear}>
           Clear
         </Button>

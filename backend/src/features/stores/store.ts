@@ -1,13 +1,4 @@
-import { z } from 'zod';
 import { varchar, pgSchema, uuid } from 'drizzle-orm/pg-core';
-
-export const storeSchema = z.object({
-  storeId: z.uuidv7(),
-  name: z.string().min(1).max(1024),
-  url: z.url().max(2048),
-});
-
-export type Store = z.infer<typeof storeSchema>;
 
 const dbSchema = pgSchema('price_tracker');
 

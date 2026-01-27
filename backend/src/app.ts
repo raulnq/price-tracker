@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { storeRoute } from './features/stores/index.js';
 import { productRoute } from './features/products/index.js';
+import { statsRoute } from './features/stats/index.js';
 import { onError } from './middlewares/on-error.js';
 import { onNotFound } from './middlewares/on-not-found.js';
 import { clerkMiddleware, requireAuth } from './middlewares/auth.js';
@@ -30,6 +31,7 @@ export const app = new Hono({ strict: false })
   .use('/api/*', requireAuth)
   .route('/api', storeRoute)
   .route('/api', productRoute)
+  .route('/api', statsRoute)
   .get('/live', c =>
     c.json({
       status: 'healthy',

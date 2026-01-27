@@ -14,29 +14,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useProducts } from '@/features/products/useProducts';
-import { useStores } from '@/features/stores/useStores';
+import { useStats } from '@/features/stats/useStats';
 import { PriceChangeIndicator } from '@/features/products/components/PriceChangeIndicator';
 
 export function Dashboard() {
-  const { data: productsData, isLoading: productsLoading } = useProducts({
-    pageSize: 100,
-    pageNumber: 1,
-  });
-  const { data: storesData, isLoading: storesLoading } = useStores({
-    pageSize: 100,
-    pageNumber: 1,
-  });
-
-  const priceDrops =
-    productsData?.items.filter(
-      p => p.priceChangePercentage !== null && p.priceChangePercentage < 0
-    ).length ?? 0;
-
-  const priceIncreases =
-    productsData?.items.filter(
-      p => p.priceChangePercentage !== null && p.priceChangePercentage > 0
-    ).length ?? 0;
+  const { data: stats, isLoading } = useStats({ days: 30, recentCount: 5 });
 
   return (
     <div className="space-y-6">
@@ -57,7 +39,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {productsLoading ? '...' : (productsData?.totalCount ?? 0)}
+              {isLoading ? '...' : (stats?.totalProducts ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
               Products being tracked
@@ -72,7 +54,7 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {storesLoading ? '...' : (storesData?.totalCount ?? 0)}
+              {isLoading ? '...' : (stats?.totalStores ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">Stores configured</p>
           </CardContent>
@@ -85,10 +67,10 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">
-              {productsLoading ? '...' : priceDrops}
+              {isLoading ? '...' : (stats?.priceDrops ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Products with lower prices
+              Products with lower prices (last 30 days)
             </p>
           </CardContent>
         </Card>
@@ -102,10 +84,10 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-500">
-              {productsLoading ? '...' : priceIncreases}
+              {isLoading ? '...' : (stats?.priceIncreases ?? 0)}
             </div>
             <p className="text-xs text-muted-foreground">
-              Products with higher prices
+              Products with higher prices (last 30 days)
             </p>
           </CardContent>
         </Card>
@@ -120,11 +102,11 @@ export function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {productsLoading ? (
+            {isLoading ? (
               <div className="text-center py-4 text-muted-foreground">
                 Loading...
               </div>
-            ) : productsData?.items.length === 0 ? (
+            ) : stats?.recentProducts.length === 0 ? (
               <div className="text-center py-4 text-muted-foreground">
                 No products yet.{' '}
                 <Link
@@ -136,7 +118,7 @@ export function Dashboard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {productsData?.items.slice(0, 5).map(product => (
+                {stats?.recentProducts.map(product => (
                   <div
                     key={product.productId}
                     className="flex items-center justify-between"
@@ -181,11 +163,11 @@ export function Dashboard() {
             <CardDescription>Your configured stores</CardDescription>
           </CardHeader>
           <CardContent>
-            {storesLoading ? (
+            {isLoading ? (
               <div className="text-center py-4 text-muted-foreground">
                 Loading...
               </div>
-            ) : storesData?.items.length === 0 ? (
+            ) : stats?.recentStores.length === 0 ? (
               <div className="text-center py-4 text-muted-foreground">
                 No stores yet.{' '}
                 <Link to="/stores/new" className="text-primary hover:underline">
@@ -194,7 +176,7 @@ export function Dashboard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {storesData?.items.slice(0, 5).map(store => (
+                {stats?.recentStores.map(store => (
                   <div
                     key={store.storeId}
                     className="flex items-center justify-between"
