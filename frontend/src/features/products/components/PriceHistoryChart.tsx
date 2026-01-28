@@ -33,7 +33,7 @@ export function PriceHistoryChartError({
       <div className="h-[300px] flex items-center justify-center text-destructive">
         Failed to load price history chart. Please try again.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </>

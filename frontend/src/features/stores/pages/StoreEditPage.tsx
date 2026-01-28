@@ -6,6 +6,7 @@ import { type EditStore } from '@price-tracker/backend/features/stores/schemas';
 import { StoreForm } from '../components/StoreForm';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 
 function StoreEditSkeleton() {
   return (
@@ -23,7 +24,7 @@ function StoreEditError({
       <div className="text-center py-8 text-destructive">
         Failed to load store. Please try again.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </>
@@ -32,11 +33,15 @@ function StoreEditError({
 
 export function StoreEditPage() {
   return (
-    <ErrorBoundary FallbackComponent={StoreEditError}>
-      <Suspense fallback={<StoreEditSkeleton />}>
-        <StoreEdit />
-      </Suspense>
-    </ErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset} FallbackComponent={StoreEditError}>
+          <Suspense fallback={<StoreEditSkeleton />}>
+            <StoreEdit />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 }
 

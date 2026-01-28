@@ -23,6 +23,7 @@ import {
 } from '../components/PriceHistoryTable';
 import { AddPriceDialog } from '../components/AddPriceDialog';
 import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 
 function ProductDetailSkeleton() {
   return (
@@ -46,7 +47,7 @@ function ProductDetailError({
       <div className="text-center py-8 text-destructive">
         Product not found or error loading product.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </div>
@@ -55,11 +56,15 @@ function ProductDetailError({
 
 export function ProductDetailPage() {
   return (
-    <ErrorBoundary FallbackComponent={ProductDetailError}>
-      <Suspense fallback={<ProductDetailSkeleton />}>
-        <ProductDetail />
-      </Suspense>
-    </ErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset} FallbackComponent={ProductDetailError}>
+          <Suspense fallback={<ProductDetailSkeleton />}>
+            <ProductDetail />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 }
 
@@ -153,14 +158,21 @@ function ProductDetail() {
           </Button>
         </CardHeader>
         <CardContent>
-          <ErrorBoundary FallbackComponent={PriceHistoryChartError}>
-            <Suspense fallback={<PriceHistoryChartSkeleton />}>
-              <PriceHistoryChart
-                productId={productId!}
-                currency={product.currency}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                FallbackComponent={PriceHistoryChartError}
+              >
+                <Suspense fallback={<PriceHistoryChartSkeleton />}>
+                  <PriceHistoryChart
+                    productId={productId!}
+                    currency={product.currency}
+                  />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </CardContent>
       </Card>
 
@@ -170,14 +182,21 @@ function ProductDetail() {
           <CardDescription>All recorded price entries</CardDescription>
         </CardHeader>
         <CardContent>
-          <ErrorBoundary FallbackComponent={PriceHistoryTableError}>
-            <Suspense fallback={<PriceHistoryTableSkeleton />}>
-              <PriceHistoryTable
-                productId={productId!}
-                currency={product.currency}
-              />
-            </Suspense>
-          </ErrorBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                FallbackComponent={PriceHistoryTableError}
+              >
+                <Suspense fallback={<PriceHistoryTableSkeleton />}>
+                  <PriceHistoryTable
+                    productId={productId!}
+                    currency={product.currency}
+                  />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </CardContent>
       </Card>
 

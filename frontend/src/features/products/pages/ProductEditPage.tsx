@@ -5,6 +5,7 @@ import { useEditProduct, useProductSuspense } from '../useProducts';
 import { ProductForm } from '../components/ProductForm';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import type { EditProduct } from '@price-tracker/backend/features/products/schemas';
 
 function ProductEditSkeleton() {
@@ -23,7 +24,7 @@ function ProductEditError({
       <div className="text-center py-8 text-destructive">
         Failed to load product. Please try again.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </>
@@ -32,11 +33,15 @@ function ProductEditError({
 
 export function ProductEditPage() {
   return (
-    <ErrorBoundary FallbackComponent={ProductEditError}>
-      <Suspense fallback={<ProductEditSkeleton />}>
-        <ProductEdit />
-      </Suspense>
-    </ErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset} FallbackComponent={ProductEditError}>
+          <Suspense fallback={<ProductEditSkeleton />}>
+            <ProductEdit />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 }
 

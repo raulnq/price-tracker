@@ -11,6 +11,7 @@ import {
 import { useStoreSuspense } from '../useStores';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Suspense } from 'react';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import {
   ProductsTable,
   ProductsTableError,
@@ -39,7 +40,7 @@ function StoreDetailError({
       <div className="text-center py-8 text-destructive">
         Store not found or error loading store.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </div>
@@ -48,11 +49,15 @@ function StoreDetailError({
 
 export function StoreDetailPage() {
   return (
-    <ErrorBoundary FallbackComponent={StoreDetailError}>
-      <Suspense fallback={<StoreDetailSkeleton />}>
-        <StoreDetail />
-      </Suspense>
-    </ErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary onReset={reset} FallbackComponent={StoreDetailError}>
+          <Suspense fallback={<StoreDetailSkeleton />}>
+            <StoreDetail />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 }
 
@@ -101,11 +106,18 @@ export function StoreDetail() {
           </Button>
         </CardHeader>
         <CardContent>
-          <ErrorBoundary FallbackComponent={ProductsTableError}>
-            <Suspense fallback={<ProductsTableSkeleton />}>
-              <ProductsTable storeId={storeId} />
-            </Suspense>
-          </ErrorBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                FallbackComponent={ProductsTableError}
+              >
+                <Suspense fallback={<ProductsTableSkeleton />}>
+                  <ProductsTable storeId={storeId} />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </CardContent>
       </Card>
     </div>

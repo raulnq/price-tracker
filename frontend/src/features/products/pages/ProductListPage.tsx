@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { ProductSearch } from '../components/ProductSearch';
 import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import {
   ProductsTable,
   ProductsTableError,
@@ -46,11 +47,22 @@ export function ProductListPage() {
         </CardHeader>
         <CardContent>
           <ProductSearch />
-          <ErrorBoundary FallbackComponent={ProductsTableError}>
-            <Suspense fallback={<ProductsTableSkeleton />}>
-              <ProductsTable storeId={storeId} name={name} storeNameVisible />
-            </Suspense>
-          </ErrorBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary
+                onReset={reset}
+                FallbackComponent={ProductsTableError}
+              >
+                <Suspense fallback={<ProductsTableSkeleton />}>
+                  <ProductsTable
+                    storeId={storeId}
+                    name={name}
+                    storeNameVisible
+                  />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </CardContent>
       </Card>
     </div>

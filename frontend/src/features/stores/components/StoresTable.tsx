@@ -34,7 +34,7 @@ export function StoresError({
   return (
     <div className="text-center py-8 text-destructive">
       Error loading stores.{' '}
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </div>

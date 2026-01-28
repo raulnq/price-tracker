@@ -11,6 +11,7 @@ import {
 import { StoreSearch } from '../components/StoreSearch';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import {
   StoresError,
   StoresSkeleton,
@@ -42,11 +43,15 @@ export function StoreListPage() {
         </CardHeader>
         <CardContent>
           <StoreSearch />
-          <ErrorBoundary FallbackComponent={StoresError}>
-            <Suspense fallback={<StoresSkeleton />}>
-              <StoresTable />
-            </Suspense>
-          </ErrorBoundary>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary onReset={reset} FallbackComponent={StoresError}>
+                <Suspense fallback={<StoresSkeleton />}>
+                  <StoresTable />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
         </CardContent>
       </Card>
     </div>

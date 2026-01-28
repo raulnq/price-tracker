@@ -32,7 +32,7 @@ export function PriceHistoryTableError({
       <div className="text-center py-8 text-destructive">
         Failed to load price history. Please try again.
       </div>
-      <button onClick={resetErrorBoundary} className="underline">
+      <button onClick={resetErrorBoundary} className="underline" type="button">
         Try again
       </button>
     </>
