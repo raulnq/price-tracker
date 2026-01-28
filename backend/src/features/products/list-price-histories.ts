@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
-import { products, priceHistories, productSchema } from './product.js';
+import { products, priceHistories } from './product.js';
 import { StatusCodes } from 'http-status-codes';
 import { paginationSchema, createPage } from '#/types/pagination.js';
 import { zValidator } from '#/utils/validation.js';
 import { createResourceNotFoundPD } from '#/utils/problem-document.js';
 import { client } from '#/database/client.js';
 import { eq, count, desc } from 'drizzle-orm';
-import { z } from 'zod';
+import { productSchema } from './schemas.js';
 const paramSchema = productSchema.pick({ productId: true });
-export type ListPriceHistories = z.infer<typeof paginationSchema>;
+
 export const listPriceHistoriesRoute = new Hono().get(
   '/:productId/prices',
   zValidator('param', paramSchema),

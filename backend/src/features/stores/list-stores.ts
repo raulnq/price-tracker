@@ -1,21 +1,15 @@
 import { Hono } from 'hono';
 import { stores } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { paginationSchema, createPage } from '#/types/pagination.js';
-import { z } from 'zod';
+import { createPage } from '#/types/pagination.js';
 import { zValidator } from '#/utils/validation.js';
 import { client } from '#/database/client.js';
 import { like, count, SQL, and } from 'drizzle-orm';
-
-const schema = paginationSchema.extend({
-  name: z.string().optional(),
-});
-
-export type ListStores = z.infer<typeof schema>;
+import { listStoresSchema } from './schemas.js';
 
 export const listRoute = new Hono().get(
   '/',
-  zValidator('query', schema),
+  zValidator('query', listStoresSchema),
   async c => {
     const { pageNumber, pageSize, name } = c.req.valid('query');
     const filters: SQL[] = [];

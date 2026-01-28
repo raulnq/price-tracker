@@ -1,4 +1,5 @@
-import { usePriceHistory } from '../usePriceHistory';
+import { useMemo } from 'react';
+import { usePriceHistorySuspense } from '../usePriceHistory';
 import {
   LineChart,
   Line,
@@ -14,46 +15,62 @@ interface PriceHistoryChartProps {
   currency: string;
 }
 
+export function PriceHistoryChartSkeleton() {
+  return (
+    <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+      Loading chart...
+    </div>
+  );
+}
+
+export function PriceHistoryChartError({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <>
+      <div className="h-[300px] flex items-center justify-center text-destructive">
+        Failed to load price history chart. Please try again.
+      </div>
+      <button onClick={resetErrorBoundary} className="underline" type="button">
+        Try again
+      </button>
+    </>
+  );
+}
+
 export function PriceHistoryChart({
   productId,
   currency,
 }: PriceHistoryChartProps) {
-  const { data, isLoading, error } = usePriceHistory(productId, {
+  const { data } = usePriceHistorySuspense(productId, {
     pageSize: 100,
     pageNumber: 1,
   });
 
-  if (isLoading) {
-    return (
-      <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-        Loading chart...
-      </div>
-    );
-  }
+  const chartData = useMemo(() => {
+    const items = data?.items;
+    if (!items?.length) return [];
+    return items
+      .map(item => {
+        const date = new Date(item.timestamp);
+        return {
+          date: date.toLocaleDateString(),
+          price: item.price,
+          timestamp: date.getTime(),
+        };
+      })
+      .sort((a, b) => a.timestamp - b.timestamp);
+  }, [data]);
 
-  if (error) {
-    return (
-      <div className="h-[300px] flex items-center justify-center text-destructive">
-        Error loading price history
-      </div>
-    );
-  }
-
-  if (!data?.items.length) {
+  if (!chartData.length) {
     return (
       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
         No price history data available
       </div>
     );
   }
-
-  const chartData = data.items
-    .map(item => ({
-      date: new Date(item.timestamp).toLocaleDateString(),
-      price: item.price,
-      timestamp: new Date(item.timestamp).getTime(),
-    }))
-    .sort((a, b) => a.timestamp - b.timestamp);
 
   return (
     <ResponsiveContainer width="100%" height={300}>

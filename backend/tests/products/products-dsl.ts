@@ -1,21 +1,23 @@
 import { testClient } from 'hono/testing';
 import { app } from '#/app.js';
 import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
-import {
-  type Product,
-  type PriceHistory,
-} from '#/features/products/product.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { parseDatesFromJSON } from '../utils.js';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { AddProduct } from '#/features/products/add-product.js';
-import type { EditProduct } from '#/features/products/edit-product.js';
-import type { ListProducts } from '#/features/products/list-products.js';
 import type { Page } from '#/types/pagination.js';
-import type { AddPriceHistory } from '#/features/products/add-price-history.js';
-import type { ListPriceHistories } from '#/features/products/list-price-histories.js';
+import type {
+  AddPriceHistory,
+  AddProduct,
+  EditProduct,
+  GetProductResponse,
+  ListPriceHistories,
+  ListProducts,
+  ListProductsResponse,
+  PriceHistory,
+  Product,
+} from '#/features/products/schemas.js';
 
 export const laptop = (
   storeId: string,
@@ -123,7 +125,9 @@ export async function editProduct(
   }
 }
 
-export async function getProduct(productId: string): Promise<Product>;
+export async function getProduct(
+  productId: string
+): Promise<GetProductResponse>;
 export async function getProduct(
   productId: string,
   expectedProblemDocument: ProblemDocument
@@ -131,7 +135,7 @@ export async function getProduct(
 export async function getProduct(
   productId: string,
   expectedProblemDocument?: ProblemDocument
-): Promise<Product | ProblemDocument> {
+): Promise<GetProductResponse | ProblemDocument> {
   const client = testClient(app);
   const response = await client.api.products[':productId'].$get({
     param: { productId },
@@ -139,7 +143,9 @@ export async function getProduct(
 
   if (response.status === StatusCodes.OK) {
     const json = await response.json();
-    const product = parseDatesFromJSON<Product>(json, ['lastUpdated']);
+    const product = parseDatesFromJSON<GetProductResponse>(json, [
+      'lastUpdated',
+    ]);
     assert.ok(product);
     return product;
   } else {
@@ -157,7 +163,7 @@ export async function getProduct(
 
 export async function listProducts(
   params: ListProducts
-): Promise<Page<Product>>;
+): Promise<Page<ListProductsResponse>>;
 export async function listProducts(
   params: ListProducts,
   expectedProblemDocument: ProblemDocument
@@ -165,7 +171,7 @@ export async function listProducts(
 export async function listProducts(
   params: ListProducts,
   expectedProblemDocument?: ProblemDocument
-): Promise<Page<Product> | ProblemDocument> {
+): Promise<Page<ListProductsResponse> | ProblemDocument> {
   const client = testClient(app);
   const queryParams = {
     pageNumber: params.pageNumber?.toString(),
@@ -182,7 +188,7 @@ export async function listProducts(
     const page = {
       ...json,
       items: json.items.map(item =>
-        parseDatesFromJSON<Product>(item, ['lastUpdated'])
+        parseDatesFromJSON<ListProductsResponse>(item, ['lastUpdated'])
       ),
     };
     assert.ok(page);

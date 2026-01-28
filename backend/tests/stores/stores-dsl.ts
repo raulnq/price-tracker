@@ -1,15 +1,18 @@
 import { testClient } from 'hono/testing';
-import { type AddStore } from '#/features/stores/add-store.js';
+
 import { app } from '#/app.js';
 import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
-import { type Store } from '#/features/stores/store.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { EditStore } from '#/features/stores/edit-store.js';
-import type { ListStores } from '#/features/stores/list-stores.js';
 import type { Page } from '#/types/pagination.js';
+import type {
+  AddStore,
+  EditStore,
+  Store,
+  ListStores,
+} from '#/features/stores/schemas.js';
 
 export const wallmart = (overrides?: Partial<AddStore>): AddStore => {
   return {

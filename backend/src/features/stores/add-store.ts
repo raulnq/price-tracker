@@ -1,16 +1,14 @@
 import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-import { stores, storeSchema } from './store.js';
+import { stores } from './store.js';
 import { zValidator } from '#/utils/validation.js';
 import { client } from '#/database/client.js';
-import { z } from 'zod';
+import { addStoreSchema } from './schemas.js';
 
-const schema = storeSchema.omit({ storeId: true });
-export type AddStore = z.infer<typeof schema>;
 export const addRoute = new Hono().post(
   '/',
-  zValidator('json', schema),
+  zValidator('json', addStoreSchema),
   async c => {
     const data = c.req.valid('json');
     const [store] = await client

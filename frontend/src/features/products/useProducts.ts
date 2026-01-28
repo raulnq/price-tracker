@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-react';
 import {
   listProducts,
@@ -6,13 +11,53 @@ import {
   createProduct,
   updateProduct,
 } from './products';
-import type { AddProduct } from '@price-tracker/backend/features/products/add-product';
-import type { EditProduct } from '@price-tracker/backend/features/products/edit-product';
-import type { ListProducts } from '@price-tracker/backend/features/products/list-products';
+import { useSearchParams } from 'react-router';
+import type {
+  AddProduct,
+  EditProduct,
+  ListProducts,
+} from '@price-tracker/backend/features/products/schemas';
 
-export function useProducts(params?: ListProducts) {
+export function useProducts({
+  pageNumber,
+  pageSize,
+  storeId,
+  name,
+}: Partial<ListProducts> = {}) {
   const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: pageNumber ?? currentPage,
+    pageSize: pageSize ?? 10,
+    name: name || undefined,
+    storeId: storeId || undefined,
+  };
   return useQuery({
+    queryKey: ['products', params],
+    queryFn: async () => {
+      const token = await getToken();
+      return listProducts(params, token);
+    },
+  });
+}
+
+export function useProductsSuspense({
+  storeId,
+  name,
+}: Partial<ListProducts> = {}) {
+  const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: currentPage,
+    pageSize: 10,
+    name: name || undefined,
+    storeId: storeId || undefined,
+  };
+  return useSuspenseQuery({
     queryKey: ['products', params],
     queryFn: async () => {
       const token = await getToken();
@@ -33,7 +78,18 @@ export function useProduct(productId: string) {
   });
 }
 
-export function useCreateProduct() {
+export function useProductSuspense(productId: string) {
+  const { getToken } = useAuth();
+  return useSuspenseQuery({
+    queryKey: ['product', productId],
+    queryFn: async () => {
+      const token = await getToken();
+      return getProduct(productId, token);
+    },
+  });
+}
+
+export function useAddProduct() {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 
@@ -48,7 +104,7 @@ export function useCreateProduct() {
   });
 }
 
-export function useUpdateProduct(productId: string) {
+export function useEditProduct(productId: string) {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 

@@ -1,27 +1,23 @@
 import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-import {
-  products,
-  priceHistories,
-  productSchema,
-  priceHistorySchema,
-  type PriceHistory,
-  type Product,
-} from './product.js';
+import { products, priceHistories } from './product.js';
 import { zValidator } from '#/utils/validation.js';
 import { createResourceNotFoundPD } from '#/utils/problem-document.js';
 import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
-import { z } from 'zod';
+import {
+  addPriceHistorySchema,
+  productSchema,
+  type PriceHistory,
+  type Product,
+} from './schemas.js';
 
 const paramSchema = productSchema.pick({ productId: true });
-const bodySchema = priceHistorySchema.pick({ price: true });
-export type AddPriceHistory = z.infer<typeof bodySchema>;
 export const addPriceHistoryRoute = new Hono().post(
   '/:productId/prices',
   zValidator('param', paramSchema),
-  zValidator('json', bodySchema),
+  zValidator('json', addPriceHistorySchema),
   async c => {
     const { productId } = c.req.valid('param');
     const { price } = c.req.valid('json');

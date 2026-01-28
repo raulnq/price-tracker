@@ -1,14 +1,18 @@
 import { client } from '../../client-api';
-import type { Product } from '@price-tracker/backend/features/products/product';
-import type { AddProduct } from '@price-tracker/backend/features/products/add-product';
-import type { EditProduct } from '@price-tracker/backend/features/products/edit-product';
-import type { ListProducts } from '@price-tracker/backend/features/products/list-products';
 import type { Page } from '@price-tracker/backend/types/pagination';
+import type {
+  AddProduct,
+  EditProduct,
+  GetProductResponse,
+  ListProducts,
+  ListProductsResponse,
+  Product,
+} from '@price-tracker/backend/features/products/schemas';
 
 export async function listProducts(
   params?: ListProducts,
   token?: string | null
-): Promise<Page<Product>> {
+): Promise<Page<ListProductsResponse>> {
   const response = await client.api.products.$get(
     {
       query: {
@@ -37,7 +41,7 @@ export async function listProducts(
 export async function getProduct(
   productId: string,
   token?: string | null
-): Promise<Product> {
+): Promise<GetProductResponse> {
   const response = await client.api.products[':productId'].$get(
     { param: { productId } },
     { headers: token ? { Authorization: `Bearer ${token}` } : {} }

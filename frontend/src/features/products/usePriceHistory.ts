@@ -1,14 +1,29 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-react';
 import { listPriceHistory, createPriceHistory } from './price-history';
-import type { AddPriceHistory } from '@price-tracker/backend/features/products/add-price-history';
-import type { ListPriceHistories } from '@price-tracker/backend/features/products/list-price-histories';
+import { useSearchParams } from 'react-router';
+import type {
+  AddPriceHistory,
+  ListPriceHistories,
+} from '@price-tracker/backend/features/products/schemas';
 
 export function usePriceHistory(
   productId: string,
-  params?: ListPriceHistories
+  { pageNumber, pageSize }: Partial<ListPriceHistories> = {}
 ) {
   const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: pageNumber ?? currentPage,
+    pageSize: pageSize ?? 10,
+  };
   return useQuery({
     queryKey: ['priceHistory', productId, params],
     queryFn: async () => {
@@ -19,7 +34,28 @@ export function usePriceHistory(
   });
 }
 
-export function useCreatePriceHistory(productId: string) {
+export function usePriceHistorySuspense(
+  productId: string,
+  { pageNumber, pageSize }: Partial<ListPriceHistories> = {}
+) {
+  const { getToken } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPage = searchParams.get('page') ?? '1';
+  const currentPage = Math.max(1, Math.floor(Number(queryPage)) || 1);
+  const params = {
+    pageNumber: pageNumber ?? currentPage,
+    pageSize: pageSize ?? 10,
+  };
+  return useSuspenseQuery({
+    queryKey: ['priceHistory', productId, params],
+    queryFn: async () => {
+      const token = await getToken();
+      return listPriceHistory(productId, params, token);
+    },
+  });
+}
+
+export function useAddPriceHistory(productId: string) {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 

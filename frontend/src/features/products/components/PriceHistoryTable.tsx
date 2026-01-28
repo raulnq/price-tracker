@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router';
 import {
   Table,
   TableBody,
@@ -8,47 +7,43 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pagination } from '@/components/Pagination';
-import { usePriceHistory } from '../usePriceHistory';
+import { usePriceHistorySuspense } from '../usePriceHistory';
 
 interface PriceHistoryTableProps {
   productId: string;
   currency: string;
 }
 
+export function PriceHistoryTableSkeleton() {
+  return (
+    <div className="text-center py-8 text-muted-foreground">
+      Loading price history...
+    </div>
+  );
+}
+
+export function PriceHistoryTableError({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <>
+      <div className="text-center py-8 text-destructive">
+        Failed to load price history. Please try again.
+      </div>
+      <button onClick={resetErrorBoundary} className="underline" type="button">
+        Try again
+      </button>
+    </>
+  );
+}
+
 export function PriceHistoryTable({
   productId,
   currency,
 }: PriceHistoryTableProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get('historyPage')) || 1;
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams(prev => {
-      prev.set('historyPage', newPage.toString());
-      return prev;
-    });
-  };
-
-  const { data, isLoading, error } = usePriceHistory(productId, {
-    pageNumber: page,
-    pageSize: 10,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        Loading price history...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8 text-destructive">
-        Error loading price history
-      </div>
-    );
-  }
+  const { data } = usePriceHistorySuspense(productId);
 
   if (!data?.items.length) {
     return (
@@ -57,10 +52,6 @@ export function PriceHistoryTable({
       </div>
     );
   }
-
-  const sortedItems = [...data.items].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
 
   return (
     <>
@@ -73,7 +64,7 @@ export function PriceHistoryTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedItems.map(item => {
+          {data.items.map(item => {
             const date = new Date(item.timestamp);
             return (
               <TableRow key={item.priceHistoryId}>
@@ -89,16 +80,9 @@ export function PriceHistoryTable({
           })}
         </TableBody>
       </Table>
-
-      {data && (
-        <div className="mt-4">
-          <Pagination
-            currentPage={data.pageNumber}
-            totalPages={data.totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      )}
+      <div className="mt-4">
+        <Pagination totalPages={data.totalPages} />
+      </div>
     </>
   );
 }
