@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@clerk/clerk-react';
 import { listPriceHistory, createPriceHistory } from './price-history';
-import type { AddPriceHistory } from '@price-tracker/backend/features/products/add-price-history';
-import type { ListPriceHistories } from '@price-tracker/backend/features/products/list-price-histories';
 import { useSearchParams } from 'react-router';
+import type {
+  AddPriceHistory,
+  ListPriceHistories,
+} from '@price-tracker/backend/features/products/schemas';
 
 export function usePriceHistory(
   productId: string,

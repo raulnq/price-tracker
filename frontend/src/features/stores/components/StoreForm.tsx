@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler, type Resolver } from 'react-hook-form';
 import {
   Card,
   CardContent,
@@ -14,23 +14,33 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   addStoreSchema,
+  editStoreSchema,
   type AddStore,
+  type EditStore,
   type Store,
 } from '@price-tracker/backend/features/stores/schemas';
 
-type StoreFormProps = {
-  store?: Store;
-  isPending: boolean;
-  onSubmit: SubmitHandler<AddStore>;
-};
+type StoreFormProps =
+  | {
+      store?: undefined;
+      isPending: boolean;
+      onSubmit: SubmitHandler<AddStore>;
+    }
+  | {
+      store: Store;
+      isPending: boolean;
+      onSubmit: SubmitHandler<EditStore>;
+    };
 
 export function StoreForm({ store, isPending, onSubmit }: StoreFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AddStore>({
-    resolver: zodResolver(addStoreSchema),
+  } = useForm<AddStore | EditStore>({
+    resolver: (store
+      ? zodResolver(editStoreSchema)
+      : zodResolver(addStoreSchema)) as Resolver<AddStore | EditStore>,
     defaultValues: store,
   });
 
@@ -58,7 +68,12 @@ export function StoreForm({ store, isPending, onSubmit }: StoreFormProps) {
           <CardDescription>Enter the store name and URL.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleSubmit(
+              onSubmit as SubmitHandler<AddStore | EditStore>
+            )}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input

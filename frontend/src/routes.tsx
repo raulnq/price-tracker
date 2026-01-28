@@ -6,7 +6,8 @@ import { StoreDetailPage } from '@/features/stores/pages/StoreDetailPage';
 import { StoreEditPage } from '@/features/stores/pages/StoreEditPage';
 import { ProductListPage } from '@/features/products/pages/ProductListPage';
 import { ProductDetail } from '@/features/products/pages/ProductDetail';
-import { ProductForm } from '@/features/products/pages/ProductForm';
+import { ProductEditPage } from '@/features/products/pages/ProductEditPage';
+import { ProductNewPage } from '@/features/products/pages/ProductNewPage';
 import { StoreNewPage } from './features/stores/pages/StoreNewPage';
 
 export const router = createBrowserRouter([
@@ -28,9 +29,9 @@ export const router = createBrowserRouter([
         path: 'products',
         children: [
           { index: true, element: <ProductListPage /> },
-          { path: 'new', element: <ProductForm /> },
+          { path: 'new', element: <ProductNewPage /> },
           { path: ':productId', element: <ProductDetail /> },
-          { path: ':productId/edit', element: <ProductForm /> },
+          { path: ':productId/edit', element: <ProductEditPage /> },
         ],
       },
     ],

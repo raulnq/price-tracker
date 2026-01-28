@@ -1,25 +1,23 @@
 import { testClient } from 'hono/testing';
 import { app } from '#/app.js';
 import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
-import {
-  type Product,
-  type PriceHistory,
-} from '#/features/products/product.js';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { parseDatesFromJSON } from '../utils.js';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { AddProduct } from '#/features/products/add-product.js';
-import type { EditProduct } from '#/features/products/edit-product.js';
+import type { Page } from '#/types/pagination.js';
 import type {
+  AddPriceHistory,
+  AddProduct,
+  EditProduct,
+  GetProductResponse,
+  ListPriceHistories,
   ListProducts,
   ListProductsResponse,
-} from '#/features/products/list-products.js';
-import type { Page } from '#/types/pagination.js';
-import type { AddPriceHistory } from '#/features/products/add-price-history.js';
-import type { ListPriceHistories } from '#/features/products/list-price-histories.js';
-import type { GetProductResponse } from '#/features/products/get-product.js';
+  PriceHistory,
+  Product,
+} from '#/features/products/schemas.js';
 
 export const laptop = (
   storeId: string,

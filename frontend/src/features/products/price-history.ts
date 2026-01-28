@@ -1,7 +1,9 @@
+import type {
+  AddPriceHistory,
+  ListPriceHistories,
+  PriceHistory,
+} from '@price-tracker/backend/features/products/schemas';
 import { client } from '../../client-api';
-import type { PriceHistory } from '@price-tracker/backend/features/products/product';
-import type { AddPriceHistory } from '@price-tracker/backend/features/products/add-price-history';
-import type { ListPriceHistories } from '@price-tracker/backend/features/products/list-price-histories';
 import type { Page } from '@price-tracker/backend/types/pagination';
 
 export async function listPriceHistory(

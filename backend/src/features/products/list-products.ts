@@ -1,29 +1,16 @@
 import { Hono } from 'hono';
-import { products, productSchema } from './product.js';
+import { products } from './product.js';
 import { stores } from '#/features/stores/store.js';
 import { StatusCodes } from 'http-status-codes';
-import { paginationSchema, createPage } from '#/types/pagination.js';
-import { z } from 'zod';
+import { createPage } from '#/types/pagination.js';
 import { zValidator } from '#/utils/validation.js';
 import { client } from '#/database/client.js';
 import { like, count, SQL, and, eq } from 'drizzle-orm';
-
-const schema = paginationSchema.extend({
-  name: z.string().optional(),
-  storeId: z.uuidv7().optional(),
-});
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const responseSchema = productSchema.extend({
-  storeName: z.string(),
-});
-export type ListProducts = z.infer<typeof schema>;
-
-export type ListProductsResponse = z.infer<typeof responseSchema>;
+import { listProductsSchema } from './schemas.js';
 
 export const listRoute = new Hono().get(
   '/',
-  zValidator('query', schema),
+  zValidator('query', listProductsSchema),
   async c => {
     const { pageNumber, pageSize, name, storeId } = c.req.valid('query');
     const filters: SQL[] = [];

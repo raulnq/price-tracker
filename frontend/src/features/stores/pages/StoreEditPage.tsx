@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { toast } from 'sonner';
 import { type SubmitHandler } from 'react-hook-form';
 import { useEditStore, useStoreSuspense } from '../useStores';
-import { type AddStore } from '@price-tracker/backend/features/stores/schemas';
+import { type EditStore } from '@price-tracker/backend/features/stores/schemas';
 import { StoreForm } from '../components/StoreForm';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -45,7 +45,7 @@ function StoreEdit() {
   const navigate = useNavigate();
   const { data } = useStoreSuspense(storeId!);
   const edit = useEditStore(storeId!);
-  const handleSubmit: SubmitHandler<AddStore> = async formData => {
+  const handleSubmit: SubmitHandler<EditStore> = async formData => {
     try {
       const result = await edit.mutateAsync(formData);
       toast.success('Store updated successfully');

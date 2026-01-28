@@ -11,10 +11,12 @@ import {
   createProduct,
   updateProduct,
 } from './products';
-import type { AddProduct } from '@price-tracker/backend/features/products/add-product';
-import type { EditProduct } from '@price-tracker/backend/features/products/edit-product';
 import { useSearchParams } from 'react-router';
-import type { ListProducts } from '@price-tracker/backend/features/products/list-products';
+import type {
+  AddProduct,
+  EditProduct,
+  ListProducts,
+} from '@price-tracker/backend/features/products/schemas';
 
 export function useProducts({
   pageNumber,
@@ -76,7 +78,18 @@ export function useProduct(productId: string) {
   });
 }
 
-export function useCreateProduct() {
+export function useProductSuspense(productId: string) {
+  const { getToken } = useAuth();
+  return useSuspenseQuery({
+    queryKey: ['product', productId],
+    queryFn: async () => {
+      const token = await getToken();
+      return getProduct(productId, token);
+    },
+  });
+}
+
+export function useAddProduct() {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 
@@ -91,7 +104,7 @@ export function useCreateProduct() {
   });
 }
 
-export function useUpdateProduct(productId: string) {
+export function useEditProduct(productId: string) {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 

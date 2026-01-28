@@ -1,13 +1,13 @@
 import { client } from '../../client-api';
-import type { Product } from '@price-tracker/backend/features/products/product';
-import type { AddProduct } from '@price-tracker/backend/features/products/add-product';
-import type { EditProduct } from '@price-tracker/backend/features/products/edit-product';
+import type { Page } from '@price-tracker/backend/types/pagination';
 import type {
+  AddProduct,
+  EditProduct,
+  GetProductResponse,
   ListProducts,
   ListProductsResponse,
-} from '@price-tracker/backend/features/products/list-products';
-import type { Page } from '@price-tracker/backend/types/pagination';
-import type { GetProductResponse } from '@price-tracker/backend/features/products/get-product';
+  Product,
+} from '@price-tracker/backend/features/products/schemas';
 
 export async function listProducts(
   params?: ListProducts,

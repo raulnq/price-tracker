@@ -1,22 +1,14 @@
 import { Hono } from 'hono';
-import { products, productSchema } from './product.js';
+import { products } from './product.js';
 import { stores } from '#/features/stores/store.js';
 import { StatusCodes } from 'http-status-codes';
 import { zValidator } from '#/utils/validation.js';
 import { createResourceNotFoundPD } from '#/utils/problem-document.js';
 import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
-import z from 'zod';
+import { productSchema } from './schemas.js';
 
 const schema = productSchema.pick({ productId: true });
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const responseSchema = productSchema.extend({
-  storeName: z.string(),
-  storeUrl: z.url(),
-});
-
-export type GetProductResponse = z.infer<typeof responseSchema>;
 
 export const getRoute = new Hono().get(
   '/:productId',
