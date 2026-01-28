@@ -7,34 +7,43 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Pagination } from '@/components/Pagination';
-import { usePriceHistory } from '../usePriceHistory';
+import { usePriceHistorySuspense } from '../usePriceHistory';
 
 interface PriceHistoryTableProps {
   productId: string;
   currency: string;
 }
 
+export function PriceHistoryTableSkeleton() {
+  return (
+    <div className="text-center py-8 text-muted-foreground">
+      Loading price history...
+    </div>
+  );
+}
+
+export function PriceHistoryTableError({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <>
+      <div className="text-center py-8 text-destructive">
+        Failed to load price history. Please try again.
+      </div>
+      <button onClick={resetErrorBoundary} className="underline">
+        Try again
+      </button>
+    </>
+  );
+}
+
 export function PriceHistoryTable({
   productId,
   currency,
 }: PriceHistoryTableProps) {
-  const { data, isLoading, error } = usePriceHistory(productId);
-
-  if (isLoading) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        Loading price history...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8 text-destructive">
-        Error loading price history
-      </div>
-    );
-  }
+  const { data } = usePriceHistorySuspense(productId);
 
   if (!data?.items.length) {
     return (
@@ -71,12 +80,9 @@ export function PriceHistoryTable({
           })}
         </TableBody>
       </Table>
-
-      {data && (
-        <div className="mt-4">
-          <Pagination totalPages={data.totalPages} />
-        </div>
-      )}
+      <div className="mt-4">
+        <Pagination totalPages={data.totalPages} />
+      </div>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, ExternalLink, Pencil, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,43 +9,64 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useProduct } from '../useProducts';
+import { useProductSuspense } from '../useProducts';
 import { PriceChangeIndicator } from '../components/PriceChangeIndicator';
-import { PriceHistoryChart } from '../components/PriceHistoryChart';
-import { PriceHistoryTable } from '../components/PriceHistoryTable';
+import {
+  PriceHistoryChart,
+  PriceHistoryChartSkeleton,
+  PriceHistoryChartError,
+} from '../components/PriceHistoryChart';
+import {
+  PriceHistoryTable,
+  PriceHistoryTableSkeleton,
+  PriceHistoryTableError,
+} from '../components/PriceHistoryTable';
 import { AddPriceDialog } from '../components/AddPriceDialog';
+import { ErrorBoundary } from 'react-error-boundary';
 
-export function ProductDetail() {
+function ProductDetailSkeleton() {
+  return (
+    <div className="text-center py-8 text-muted-foreground">Loading...</div>
+  );
+}
+
+function ProductDetailError({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <Button variant="ghost" asChild>
+        <Link to="/products">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Products
+        </Link>
+      </Button>
+      <div className="text-center py-8 text-destructive">
+        Product not found or error loading product.
+      </div>
+      <button onClick={resetErrorBoundary} className="underline">
+        Try again
+      </button>
+    </div>
+  );
+}
+
+export function ProductDetailPage() {
+  return (
+    <ErrorBoundary FallbackComponent={ProductDetailError}>
+      <Suspense fallback={<ProductDetailSkeleton />}>
+        <ProductDetail />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+function ProductDetail() {
   const { productId } = useParams<{ productId: string }>();
   const [showAddPrice, setShowAddPrice] = useState(false);
-
-  const {
-    data: product,
-    isLoading: productLoading,
-    error: productError,
-  } = useProduct(productId!);
-
-  if (productLoading) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">Loading...</div>
-    );
-  }
-
-  if (productError || !product) {
-    return (
-      <div className="space-y-4">
-        <Button variant="ghost" asChild>
-          <Link to="/products">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Products
-          </Link>
-        </Button>
-        <div className="text-center py-8 text-destructive">
-          Product not found or error loading product.
-        </div>
-      </div>
-    );
-  }
+  const { data: product } = useProductSuspense(productId!);
 
   return (
     <div className="space-y-6">
@@ -132,10 +153,14 @@ export function ProductDetail() {
           </Button>
         </CardHeader>
         <CardContent>
-          <PriceHistoryChart
-            productId={productId!}
-            currency={product.currency}
-          />
+          <ErrorBoundary FallbackComponent={PriceHistoryChartError}>
+            <Suspense fallback={<PriceHistoryChartSkeleton />}>
+              <PriceHistoryChart
+                productId={productId!}
+                currency={product.currency}
+              />
+            </Suspense>
+          </ErrorBoundary>
         </CardContent>
       </Card>
 
@@ -145,10 +170,14 @@ export function ProductDetail() {
           <CardDescription>All recorded price entries</CardDescription>
         </CardHeader>
         <CardContent>
-          <PriceHistoryTable
-            productId={productId!}
-            currency={product.currency}
-          />
+          <ErrorBoundary FallbackComponent={PriceHistoryTableError}>
+            <Suspense fallback={<PriceHistoryTableSkeleton />}>
+              <PriceHistoryTable
+                productId={productId!}
+                currency={product.currency}
+              />
+            </Suspense>
+          </ErrorBoundary>
         </CardContent>
       </Card>
 

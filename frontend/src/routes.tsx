@@ -5,7 +5,7 @@ import { StoreListPage } from '@/features/stores/pages/StoreListPage';
 import { StoreDetailPage } from '@/features/stores/pages/StoreDetailPage';
 import { StoreEditPage } from '@/features/stores/pages/StoreEditPage';
 import { ProductListPage } from '@/features/products/pages/ProductListPage';
-import { ProductDetail } from '@/features/products/pages/ProductDetail';
+import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
 import { ProductEditPage } from '@/features/products/pages/ProductEditPage';
 import { ProductNewPage } from '@/features/products/pages/ProductNewPage';
 import { StoreNewPage } from './features/stores/pages/StoreNewPage';
@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <ProductListPage /> },
           { path: 'new', element: <ProductNewPage /> },
-          { path: ':productId', element: <ProductDetail /> },
+          { path: ':productId', element: <ProductDetailPage /> },
           { path: ':productId/edit', element: <ProductEditPage /> },
         ],
       },

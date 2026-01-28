@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { usePriceHistory } from '../usePriceHistory';
+import { usePriceHistorySuspense } from '../usePriceHistory';
 import {
   LineChart,
   Line,
@@ -15,11 +15,36 @@ interface PriceHistoryChartProps {
   currency: string;
 }
 
+export function PriceHistoryChartSkeleton() {
+  return (
+    <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+      Loading chart...
+    </div>
+  );
+}
+
+export function PriceHistoryChartError({
+  resetErrorBoundary,
+}: {
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <>
+      <div className="h-[300px] flex items-center justify-center text-destructive">
+        Failed to load price history chart. Please try again.
+      </div>
+      <button onClick={resetErrorBoundary} className="underline">
+        Try again
+      </button>
+    </>
+  );
+}
+
 export function PriceHistoryChart({
   productId,
   currency,
 }: PriceHistoryChartProps) {
-  const { data, isLoading, error } = usePriceHistory(productId, {
+  const { data } = usePriceHistorySuspense(productId, {
     pageSize: 100,
     pageNumber: 1,
   });
@@ -38,22 +63,6 @@ export function PriceHistoryChart({
       })
       .sort((a, b) => a.timestamp - b.timestamp);
   }, [data]);
-
-  if (isLoading) {
-    return (
-      <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-        Loading chart...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="h-[300px] flex items-center justify-center text-destructive">
-        Error loading price history
-      </div>
-    );
-  }
 
   if (!chartData.length) {
     return (

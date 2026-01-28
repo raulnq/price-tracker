@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useCreatePriceHistory } from '@/features/products/usePriceHistory';
+import { useAddPriceHistory } from '@/features/products/usePriceHistory';
 
 interface AddPriceDialogProps {
   productId: string;
@@ -25,12 +25,13 @@ export function AddPriceDialog({
 }: AddPriceDialogProps) {
   const [error, setError] = useState<string | null>(null);
 
-  const createMutation = useCreatePriceHistory(productId);
+  const add = useAddPriceHistory(productId);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const priceValue = parseFloat(formData.get('price') as string);
 
     if (isNaN(priceValue) || priceValue <= 0) {
@@ -39,8 +40,8 @@ export function AddPriceDialog({
     }
 
     try {
-      await createMutation.mutateAsync({ price: priceValue });
-      e.currentTarget.reset();
+      await add.mutateAsync({ price: priceValue });
+      form.reset();
       setError(null);
       onOpenChange(false);
     } catch (err) {
@@ -76,7 +77,7 @@ export function AddPriceDialog({
                 step="0.01"
                 min="0.01"
                 placeholder="0.00"
-                disabled={createMutation.isPending}
+                disabled={add.isPending}
               />
               {error && <p className="text-sm text-destructive">{error}</p>}
             </div>
@@ -89,8 +90,8 @@ export function AddPriceDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Adding...' : 'Add Price'}
+            <Button type="submit" disabled={add.isPending}>
+              {add.isPending ? 'Adding...' : 'Add Price'}
             </Button>
           </DialogFooter>
         </form>
