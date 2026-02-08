@@ -3,7 +3,7 @@ import { products } from '#/features/products/product.js';
 import { stores } from '#/features/stores/store.js';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
-import { zValidator } from '#/utils/validation.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { count, and, lt, gt, gte, eq, desc } from 'drizzle-orm';
 import { storeSchema } from '../stores/schemas.js';

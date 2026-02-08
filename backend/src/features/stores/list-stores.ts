@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { stores } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { createPage } from '#/types/pagination.js';
-import { zValidator } from '#/utils/validation.js';
+import { createPage } from '#/pagination.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { like, count, SQL, and } from 'drizzle-orm';
 import { listStoresSchema } from './schemas.js';

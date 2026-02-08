@@ -1,6 +1,6 @@
 import { MailtrapClient } from 'mailtrap';
 import { ENV } from '#/env.js';
-import { logger } from '#/utils/logger.js';
+import { logger } from '#/logger.js';
 import type { Product } from '#/features/products/schemas.js';
 
 function escapeHtml(text: string): string {

@@ -1,4 +1,4 @@
-import { paginationSchema } from '#/types/pagination.js';
+import { paginationSchema } from '#/pagination.js';
 import { z } from 'zod';
 
 export const productSchema = z.object({

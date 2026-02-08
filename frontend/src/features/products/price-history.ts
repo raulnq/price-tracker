@@ -4,7 +4,7 @@ import type {
   PriceHistory,
 } from '@price-tracker/backend/features/products/schemas';
 import { client } from '../../client-api';
-import type { Page } from '@price-tracker/backend/types/pagination';
+import type { Page } from '@price-tracker/backend/pagination';
 
 export async function listPriceHistory(
   productId: string,

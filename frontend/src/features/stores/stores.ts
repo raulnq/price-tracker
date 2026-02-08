@@ -1,5 +1,5 @@
 import { client } from '../../client-api';
-import type { Page } from '@price-tracker/backend/types/pagination';
+import type { Page } from '@price-tracker/backend/pagination';
 import type {
   AddStore,
   EditStore,

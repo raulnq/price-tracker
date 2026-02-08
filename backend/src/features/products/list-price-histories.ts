@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
 import { products, priceHistories } from './product.js';
 import { StatusCodes } from 'http-status-codes';
-import { paginationSchema, createPage } from '#/types/pagination.js';
-import { zValidator } from '#/utils/validation.js';
-import { createResourceNotFoundPD } from '#/utils/problem-document.js';
+import { paginationSchema, createPage } from '#/pagination.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { eq, count, desc } from 'drizzle-orm';
 import { productSchema } from './schemas.js';
+import { notFoundError } from '#/extensions.js';
 const paramSchema = productSchema.pick({ productId: true });
 
 export const listPriceHistoriesRoute = new Hono().get(
@@ -25,10 +25,7 @@ export const listPriceHistoriesRoute = new Hono().get(
       .limit(1);
 
     if (existing.length === 0) {
-      return c.json(
-        createResourceNotFoundPD(c.req.path, `Product ${productId} not found`),
-        StatusCodes.NOT_FOUND
-      );
+      return notFoundError(c, `Product ${productId} not found`);
     }
 
     const [{ totalCount }] = await client

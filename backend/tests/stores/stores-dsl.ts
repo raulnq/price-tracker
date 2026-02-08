@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
 import { assertStrictEqualProblemDocument } from '../assertions.js';
-import type { Page } from '#/types/pagination.js';
+import type { Page } from '#/pagination.js';
 import type {
   AddStore,
   EditStore,

@@ -9,7 +9,7 @@ import { ENV } from './env.js';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { pinoLogger } from 'hono-pino';
-import { logger } from './utils/logger.js';
+import { logger } from './logger.js';
 
 export const app = new Hono({ strict: false })
   .use(cors({ origin: ENV.CORS_ORIGIN, credentials: true }))

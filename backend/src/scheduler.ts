@@ -1,11 +1,11 @@
 import { ENV } from '#/env.js';
-import { logger } from '#/utils/logger.js';
+import { logger } from '#/logger.js';
 import cron from 'node-cron';
 import { scrapeProducts } from './features/scraper/scraper.js';
 import {
   sendPriceDropSummaryEmail,
   type PriceDrop,
-} from './utils/email-client.js';
+} from './features/scraper/email-client.js';
 
 process.on('uncaughtException', err => {
   logger.fatal(err, 'Uncaught exception');

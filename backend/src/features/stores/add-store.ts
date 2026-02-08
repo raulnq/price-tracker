@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { stores } from './store.js';
-import { zValidator } from '#/utils/validation.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { addStoreSchema } from './schemas.js';
 

@@ -2,8 +2,7 @@ import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { products, priceHistories } from './product.js';
-import { zValidator } from '#/utils/validation.js';
-import { createResourceNotFoundPD } from '#/utils/problem-document.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
 import {
@@ -12,6 +11,7 @@ import {
   type PriceHistory,
   type Product,
 } from './schemas.js';
+import { notFoundError } from '#/extensions.js';
 
 const paramSchema = productSchema.pick({ productId: true });
 export const addPriceHistoryRoute = new Hono().post(
@@ -29,10 +29,7 @@ export const addPriceHistoryRoute = new Hono().post(
       .limit(1);
 
     if (!product) {
-      return c.json(
-        createResourceNotFoundPD(c.req.path, `Product ${productId} not found`),
-        StatusCodes.NOT_FOUND
-      );
+      return notFoundError(c, `Product ${productId} not found`);
     }
 
     const result = await addPriceHistory(product, price);

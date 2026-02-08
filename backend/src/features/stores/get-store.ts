@@ -1,11 +1,11 @@
 import { Hono } from 'hono';
 import { stores } from './store.js';
 import { StatusCodes } from 'http-status-codes';
-import { zValidator } from '#/utils/validation.js';
-import { createResourceNotFoundPD } from '#/utils/problem-document.js';
+import { zValidator } from '#/validator.js';
 import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
 import { storeSchema } from './schemas.js';
+import { notFoundError } from '#/extensions.js';
 
 const schema = storeSchema.pick({ storeId: true });
 
@@ -20,10 +20,7 @@ export const getRoute = new Hono().get(
       .where(eq(stores.storeId, storeId))
       .limit(1);
     if (!store) {
-      return c.json(
-        createResourceNotFoundPD(c.req.path, `Store ${storeId} not found`),
-        StatusCodes.NOT_FOUND
-      );
+      return notFoundError(c, `Store ${storeId} not found`);
     }
     return c.json(store, StatusCodes.OK);
   }

@@ -2,12 +2,12 @@ import { Hono } from 'hono';
 import { v7 } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { products } from './product.js';
-import { zValidator } from '#/utils/validation.js';
+import { zValidator } from '#/validator.js';
 import { stores } from '#/features/stores/store.js';
-import { createResourceNotFoundPD } from '#/utils/problem-document.js';
 import { client } from '#/database/client.js';
 import { eq } from 'drizzle-orm';
 import { addProductSchema } from './schemas.js';
+import { notFoundError } from '#/extensions.js';
 
 export const addRoute = new Hono().post(
   '/',
@@ -21,10 +21,7 @@ export const addRoute = new Hono().post(
       .where(eq(stores.storeId, data.storeId))
       .limit(1);
     if (!store) {
-      return c.json(
-        createResourceNotFoundPD(c.req.path, `Store ${data.storeId} not found`),
-        StatusCodes.NOT_FOUND
-      );
+      return notFoundError(c, `Store ${data.storeId} not found`);
     }
 
     const [product] = await client
