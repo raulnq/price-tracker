@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { type SubmitHandler } from 'react-hook-form';
 import { useAddStore } from '../useStores';
-import { type AddStore } from '@price-tracker/backend/features/stores/schemas';
+import { type AddStore } from '#/features/stores/schemas';
 import { StoreForm } from '../components/StoreForm';
 
 export function StoreNewPage() {

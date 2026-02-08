@@ -1,11 +1,11 @@
 import { client } from '../../client-api';
-import type { Page } from '@price-tracker/backend/pagination';
+import type { Page } from '#/pagination';
 import type {
   AddStore,
   EditStore,
   Store,
   ListStores,
-} from '@price-tracker/backend/features/stores/schemas';
+} from '#/features/stores/schemas';
 
 export async function listStores(
   params?: ListStores,

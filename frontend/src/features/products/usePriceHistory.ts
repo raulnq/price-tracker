@@ -10,7 +10,7 @@ import { useSearchParams } from 'react-router';
 import type {
   AddPriceHistory,
   ListPriceHistories,
-} from '@price-tracker/backend/features/products/schemas';
+} from '#/features/products/schemas';
 
 export function usePriceHistory(
   productId: string,

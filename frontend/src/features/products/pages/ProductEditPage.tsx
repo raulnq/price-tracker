@@ -6,7 +6,7 @@ import { ProductForm } from '../components/ProductForm';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import type { EditProduct } from '@price-tracker/backend/features/products/schemas';
+import type { EditProduct } from '#/features/products/schemas';
 
 function ProductEditSkeleton() {
   return (

@@ -1,5 +1,5 @@
 import { client } from '../../client-api';
-import type { Page } from '@price-tracker/backend/pagination';
+import type { Page } from '#/pagination';
 import type {
   AddProduct,
   EditProduct,
@@ -7,7 +7,7 @@ import type {
   ListProducts,
   ListProductsResponse,
   Product,
-} from '@price-tracker/backend/features/products/schemas';
+} from '#/features/products/schemas';
 
 export async function listProducts(
   params?: ListProducts,

@@ -1,5 +1,5 @@
 import { hc } from 'hono/client';
-import type { App } from '@price-tracker/backend/app';
+import type { App } from '#/app';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';

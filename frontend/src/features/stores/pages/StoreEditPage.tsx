@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { toast } from 'sonner';
 import { type SubmitHandler } from 'react-hook-form';
 import { useEditStore, useStoreSuspense } from '../useStores';
-import { type EditStore } from '@price-tracker/backend/features/stores/schemas';
+import { type EditStore } from '#/features/stores/schemas';
 import { StoreForm } from '../components/StoreForm';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

@@ -23,7 +23,7 @@ import {
   type AddProduct,
   type EditProduct,
   type Product,
-} from '@price-tracker/backend/features/products/schemas';
+} from '#/features/products/schemas';
 import { StoreSelect } from '@/features/stores/components/StoreSelect';
 
 type ProductFormProps =

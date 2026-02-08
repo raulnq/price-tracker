@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { useStats } from '@/features/stats/useStats';
 import { PriceChangeIndicator } from '@/features/products/components/PriceChangeIndicator';
 
-export function Dashboard() {
+export function DashboardPage() {
   const { data: stats, isLoading } = useStats({ days: 30, recentCount: 5 });
 
   return (

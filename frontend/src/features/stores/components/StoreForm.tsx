@@ -18,7 +18,7 @@ import {
   type AddStore,
   type EditStore,
   type Store,
-} from '@price-tracker/backend/features/stores/schemas';
+} from '#/features/stores/schemas';
 
 type StoreFormProps =
   | {

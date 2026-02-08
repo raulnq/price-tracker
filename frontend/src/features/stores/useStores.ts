@@ -11,7 +11,7 @@ import type {
   AddStore,
   EditStore,
   ListStores,
-} from '@price-tracker/backend/features/stores/schemas';
+} from '#/features/stores/schemas';
 
 export function useStores({
   pageNumber,

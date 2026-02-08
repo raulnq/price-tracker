@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from 'react-router';
 import { Store, Package, LayoutDashboard } from 'lucide-react';
 import { UserButton } from '@clerk/clerk-react';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -43,7 +44,8 @@ export function AppLayout() {
               );
             })}
           </nav>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             <UserButton />
           </div>
         </div>

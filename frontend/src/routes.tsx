@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Dashboard } from '@/pages/Dashboard';
+import { DashboardPage } from '@/features/stats/pages/DashboardPage';
 import { StoreListPage } from '@/features/stores/pages/StoreListPage';
 import { StoreDetailPage } from '@/features/stores/pages/StoreDetailPage';
 import { StoreEditPage } from '@/features/stores/pages/StoreEditPage';
@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: <Dashboard /> },
+      { index: true, element: <DashboardPage /> },
       {
         path: 'stores',
         children: [

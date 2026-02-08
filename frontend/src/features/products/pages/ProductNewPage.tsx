@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { type SubmitHandler } from 'react-hook-form';
 import { useAddProduct } from '../useProducts';
 import { ProductForm } from '../components/ProductForm';
-import type { AddProduct } from '@price-tracker/backend/features/products/schemas';
+import type { AddProduct } from '#/features/products/schemas';
 
 export function ProductNewPage() {
   const navigate = useNavigate();

@@ -78,24 +78,29 @@ export function PriceHistoryChart({
         data={chartData}
         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="var(--color-border)"
+          opacity={0.5}
+        />
         <XAxis
           dataKey="date"
           className="text-xs"
-          tick={{ fill: 'currentColor' }}
+          tick={{ fill: 'var(--color-foreground)' }}
         />
         <YAxis
           className="text-xs"
-          tick={{ fill: 'currentColor' }}
+          tick={{ fill: 'var(--color-foreground)' }}
           tickFormatter={value => `${value} ${currency}`}
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'hsl(var(--card))',
-            border: '1px solid hsl(var(--border))',
+            backgroundColor: 'var(--color-card)',
+            border: '1px solid var(--color-border)',
             borderRadius: '0.5rem',
+            color: 'var(--color-card-foreground)',
           }}
-          labelStyle={{ color: 'hsl(var(--foreground))' }}
+          labelStyle={{ color: 'var(--color-card-foreground)' }}
           formatter={value => [
             `${Number(value).toFixed(2)} ${currency}`,
             'Price',
@@ -104,10 +109,10 @@ export function PriceHistoryChart({
         <Line
           type="monotone"
           dataKey="price"
-          stroke="hsl(var(--primary))"
+          stroke="#3b82f6"
           strokeWidth={2}
-          dot={{ fill: 'hsl(var(--primary))' }}
-          activeDot={{ r: 6 }}
+          dot={{ fill: '#3b82f6', r: 4 }}
+          activeDot={{ r: 6, fill: '#3b82f6' }}
         />
       </LineChart>
     </ResponsiveContainer>

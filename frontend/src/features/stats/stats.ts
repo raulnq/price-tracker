@@ -1,8 +1,5 @@
 import { client } from '../../client-api';
-import type {
-  GetStats,
-  GetStatsResponse,
-} from '@price-tracker/backend/features/stats/get-stats';
+import type { GetStats, GetStatsResponse } from '#/features/stats/get-stats';
 
 export async function getStats(
   params?: Partial<GetStats>,

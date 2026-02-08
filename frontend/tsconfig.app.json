@@ -20,7 +20,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@price-tracker/backend/*": ["../backend/src/*"],
       "#/*": ["../backend/src/*"]
     },
 

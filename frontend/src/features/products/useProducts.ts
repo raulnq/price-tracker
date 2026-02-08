@@ -16,7 +16,7 @@ import type {
   AddProduct,
   EditProduct,
   ListProducts,
-} from '@price-tracker/backend/features/products/schemas';
+} from '#/features/products/schemas';
 
 export function useProducts({
   pageNumber,
