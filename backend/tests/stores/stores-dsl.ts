@@ -1,7 +1,7 @@
 import { testClient } from 'hono/testing';
 
 import { app } from '#/app.js';
-import type { ProblemDocument } from 'http-problem-details/dist/ProblemDocument.js';
+import type { ProblemDocument } from 'http-problem-details';
 import { faker } from '@faker-js/faker';
 import { StatusCodes } from 'http-status-codes';
 import assert from 'node:assert';
