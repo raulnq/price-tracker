@@ -4,6 +4,7 @@ import { addRoute } from './add-product.js';
 import { getRoute } from './get-product.js';
 import { editRoute } from './edit-product.js';
 import { addPriceHistoryRoute } from './add-price-history.js';
+import { deleteOldPriceHistoriesRoute } from './delete-old-price-histories.js';
 import { listPriceHistoriesRoute } from './list-price-histories.js';
 
 export const productRoute = new Hono()
@@ -13,4 +14,5 @@ export const productRoute = new Hono()
   .route('/', getRoute)
   .route('/', editRoute)
   .route('/', addPriceHistoryRoute)
+  .route('/', deleteOldPriceHistoriesRoute)
   .route('/', listPriceHistoriesRoute);

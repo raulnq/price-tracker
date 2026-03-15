@@ -291,6 +291,24 @@ export async function listPriceHistories(
   }
 }
 
+export interface DeleteOldPriceHistoriesResponse {
+  deletedCount: number;
+}
+
+export async function deleteOldPriceHistories(
+  productId: string,
+  days?: number
+): Promise<DeleteOldPriceHistoriesResponse> {
+  const client = testClient(app);
+  const response = await client.api.products[':productId'].prices.$delete({
+    param: { productId },
+    query: { days: days?.toString() },
+  });
+
+  assert.strictEqual(response.status, StatusCodes.OK);
+  return response.json();
+}
+
 export const assertProduct = (product: Product) => {
   return {
     hasProductId(expected: string) {
