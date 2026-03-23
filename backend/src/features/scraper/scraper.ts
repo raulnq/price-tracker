@@ -4,6 +4,7 @@ import { products } from '#/features/products/product.js';
 import { extractPrice, type ExtractedPrice } from './extractor.js';
 import { logger } from '#/logger.js';
 import { addPriceHistory } from '#/features/products/add-price-history.js';
+import { deleteOldPriceHistories } from '#/features/products/delete-old-price-histories.js';
 import type { Product } from '../products/schemas.js';
 
 export type ScrapeResult = ExtractedPrice & {
@@ -65,7 +66,7 @@ export async function scrapeProduct(
 
     if (extracted.price !== null && extracted.price > 0) {
       const result = await addPriceHistory(product, extracted.price);
-
+      await deleteOldPriceHistories(product, 30);
       const duration = Date.now() - startTime;
       logger.info(
         {
