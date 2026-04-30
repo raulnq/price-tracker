@@ -8,9 +8,9 @@
     "build": "tsc && tsc-alias",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "start:scheduler": "cross-env NODE_ENV=production node dist/src/scheduler.js",
-    "database:generate": "tsx ../node_modules/drizzle-kit/bin.cjs generate",
-    "database:migrate": "tsx ../node_modules/drizzle-kit/bin.cjs migrate",
-    "database:studio": "tsx ../node_modules/drizzle-kit/bin.cjs studio",
+    "database:generate": "tsx ./node_modules/drizzle-kit/bin.cjs generate",
+    "database:migrate": "tsx ./node_modules/drizzle-kit/bin.cjs migrate",
+    "database:studio": "tsx ./node_modules/drizzle-kit/bin.cjs studio",
     "test": "cross-env NODE_ENV=test tsx --import ./tests/setup.ts --test ./tests/**/*.test.ts"
   },
   "dependencies": {
